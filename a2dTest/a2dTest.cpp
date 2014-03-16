@@ -1,18 +1,7 @@
 /*
- * i2cLed.c
- *
- *  Created on: Feb 22, 2014
+ *  Created on: Mar 16, 2014
  *      Author: mlj
  */
-
-
-// CMPS03 example c code for the Raspberry pi
-//
-// Reads the bearing from the CMPS03 and displays
-// it on the screen.
-//
-// By James Henderson, 2012
-
 
 #include <stdio.h>
 #include <stdlib.h>
