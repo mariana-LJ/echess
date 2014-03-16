@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <time.h>
 
 typedef unsigned char byte;
 
@@ -32,9 +33,12 @@ int main(int argc, char **argv)
 	int fileDescr;							// File description
 	char *fileName = "/dev/i2c-1";			// Name of the port we will be using (1 for Rev. 2, 0-Rev.1)
 	const byte  a2d_address=0x48;      		// I2C Address of PF8591 Chip
-	const byte  control_byte = 0x00;				// Register Address of channel control_byte (A/D channel 0)
 	unsigned char buf[10];					// Buffer for data being read/ written on the i2c bus
 	int i = 0;								// Auxiliary
+	int b = 0;
+	struct timespec tim, tim2;				// Nanosleep function setup
+	tim.tv_sec = 0;
+	tim.tv_nsec = 500000000L;
 
 	if ((fileDescr = open(fileName, O_RDWR)) < 0) {		// Open port for reading and writing
 		printf("Failed to open i2c port\n");
@@ -47,23 +51,38 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	// This is the register we want to read from:
-	buf[0] = control_byte; // Set A/D to read channel 0
+	buf[0] = 0x00; // Set A/D to read channel 0
+	if ((write(fileDescr, buf, 1)) != 1) {		// Send control byte
+			printf("Error writing to i2c slave\n");
+			exit(1);
+	}
 
-	if ((write(fileDescr, buf, 1)) != 1) {		// Send register we want to read from (2 bytes)
-		printf("Error writing to i2c slave\n");
+	buf[0] = 0x44; // Set A/D to auto increment mode
+	if ((write(fileDescr, buf, 1)) != 1) {		// Send control byte
+			printf("Error writing to i2c slave\n");
+			exit(1);
+	}
+
+	if((read(fileDescr, buf, 1)) != 1){				// Read previously stored value (possibly garbage)
+		printf("Error reading from i2c slave\n");
 		exit(1);
 	}
 
-	for(i = 0; i<30; i++) {
-		if ((read(fileDescr, buf, 1)) != 1) {		// Send register we want to read from (2 bytes)
-				printf("Error writing to i2c slave\n");
-				exit(1);
+	for(i = 0; i<100; i++) {
+		//system("clear");
+		if ((read(fileDescr, buf, 4)) != 4) {		// Read 5 bytes from A/D
+			printf("Error reading from i2c slave\n");
+			exit(1);
 		} else {
-			printf("%u \n",buf[0]);
+			for(b = 0; b<4; b++){
+				printf("%x  ",buf[b]); // Print last byte (5th byte)
+			}
+			printf("\n");
 		}
 
-		sleep(1);
+		if(nanosleep(&tim , &tim2) < 0 ){
+			  printf("Nano sleep system call failed \n");
+		}
 	}
 
 	return 0;
