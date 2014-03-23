@@ -39,33 +39,23 @@ public:
 			exit(1);
 		}
 
-		buf_[0] = 0x00; // Set A/D to read channel 0 with no auto increment (see p. 6 of PCF8591 datasheet)
-		if ((write(fileDescr_, buf_, 1)) != 1) {		// Send control byte
-				printf("Error writing to i2c slave\n");
-				exit(1);
-		}
+	}
 
+	void Read() {
 		buf_[0] = 0x44; // Set A/D to auto increment mode + analog output enable flag (see p. 6 of PCF8591 datasheet)
 		if ((write(fileDescr_, buf_, 1)) != 1) {		// Send control byte
 				printf("Error writing to i2c slave\n");
 				exit(1);
 		}
 
-		if((read(fileDescr_, buf_, 1)) != 1){			// Read previously stored value (possibly garbage)
-			printf("Error reading from i2c slave\n");
-			exit(1);
-		}
-	}
-
-	void Read() {
-		if ((read(fileDescr_, buf_, 4)) != 4) {		// Read 4 bytes from A/D
+		if ((read(fileDescr_, buf_, 5)) != 5) {		// Read 5 bytes from A/D first byte is garbage
 			printf("Error reading from i2c slave\n");
 			exit(1);
 		}
 	}
 
 	byte Get(int channel) {							// Get the converted value stored in buf_[channel]
-		return buf_[channel];
+		return buf_[channel+1]; // First channel has garbage
 	}
 
 private:
@@ -180,12 +170,40 @@ void Test_Gpio_Expander() {
 			printf("Nano sleep system call failed \n");
 		}
 	}
-	gpio1.Set_Port_B(0x00);
-	gpio1.Configure_Port_B(0xFF);
+	gpio1.Set_Port_B(0x00);	// Set GPIOB0-7 low
+	gpio1.Configure_Port_B(0xFF); // Leave GPIOB0-7 as inputs
+
+}
+
+void Test_MUX(){
+	struct timespec tim, tim2;				// Nanosleep function setup (0 seconds and 10ms)
+	tim.tv_sec = 0;
+	tim.tv_nsec = 10000000L;
+	string filename = "/dev/i2c-1";
+	int i;
+	byte b;
+
+	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
+	a2d_1.Initialize();
+
+	Gpio_Expander gpio1(filename.c_str(), 0x20);	//To instantiate a GPIO object (first GPIO chip)
+	gpio1.Initialize();
+	gpio1.Configure_Port_B(0x00);	//Configure port B pins as outputs
+
+	for(i = 0; i < 4; i++){
+		gpio1.Set_Port_B(i);
+		if(nanosleep(&tim , &tim2) < 0 ){
+			printf("Nano sleep system call failed \n");
+		}
+		a2d_1.Read();
+		b = a2d_1.Get(0);
+		printf("%x\t", b);
+	}
+	printf("\n");
 
 }
 
 int main(int argc, char **argv){
-	Test_Gpio_Expander();
+	Test_MUX();
 	return 0;
 }
