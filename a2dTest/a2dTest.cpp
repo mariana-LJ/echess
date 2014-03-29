@@ -180,24 +180,37 @@ void Test_MUX(){
 	tim.tv_sec = 0;
 	tim.tv_nsec = 10000000L;
 	string filename = "/dev/i2c-1";
-	int i;
-	byte b;
+	const int MUX_CHANNELS = 4;
+	byte board[4][4];
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
+	A2D_Converter a2d_2(filename.c_str(), 0x49);
+	a2d_2.Initialize();
 
 	Gpio_Expander gpio1(filename.c_str(), 0x20);	//To instantiate a GPIO object (first GPIO chip)
 	gpio1.Initialize();
 	gpio1.Configure_Port_B(0x00);	//Configure port B pins as outputs
 
-	for(i = 0; i < 4; i++){
-		gpio1.Set_Port_B(i);
-		if(nanosleep(&tim , &tim2) < 0 ){
+	for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
+		gpio1.Set_Port_B(mux_channel);
+		/*if(nanosleep(&tim , &tim2) < 0 ){
 			printf("Nano sleep system call failed \n");
-		}
+		}*/
 		a2d_1.Read();
-		b = a2d_1.Get(0);
-		printf("%x\t", b);
+		a2d_2.Read();
+		board[mux_channel][0] = a2d_1.Get(0);
+		board[mux_channel][1] = a2d_1.Get(1);
+		board[mux_channel][2] = a2d_2.Get(0);
+		board[mux_channel][3] = a2d_2.Get(1);
+	}
+
+	system("clear");
+	for(int row = 0; row < 4; row++){
+		for(int col = 0; col < 4; col++){
+			printf("%x\t", board[row][col]);
+		}
+		printf("\n");
 	}
 	printf("\n");
 
