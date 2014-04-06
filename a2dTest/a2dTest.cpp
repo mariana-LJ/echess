@@ -1,6 +1,6 @@
 /*
  *  Created on: Mar 16, 2014
- *      Author: mlj
+ *      Author: Mariana Lopez Jaimez
  */
 
 #include <stdio.h>
@@ -193,7 +193,7 @@ void Test_MUX(){
 	gpio1.Configure_Port_B(0x00);	//Configure port B pins as outputs
 
 	for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
-		gpio1.Set_Port_B(mux_channel);
+		gpio1.Set_Port_B(1<<mux_channel);
 		/*if(nanosleep(&tim , &tim2) < 0 ){
 			printf("Nano sleep system call failed \n");
 		}*/
