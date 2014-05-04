@@ -99,14 +99,53 @@ void Test_A2D()
 }
 
 class Gpio_Expander{
-public:
-	Gpio_Expander(const char *fileName, byte mcp_address) {
-		GPIOA_ = 0x12;
-		GPIOB_ = 0x13;
+private:
+	int fileDescr_;							// File description
+	const char *fileName_;	// Name of the port we will be using (1 for Rev. 2, 0-Rev.1)
+	byte  mcp_address_;      		// I2C Address of MCP23017 Chip
+	unsigned char buf_[10];					// Buffer for data being read/ written on the i2c bus
 
+	byte IODIRA_;
+	byte IODIRB_;
+	byte  GPIOA_;						// Register Address of Port A
+	byte  GPIOB_;						// Register Address of Port B
+
+	void Set_Register(byte reg, byte value){
+		buf_[0] = reg;
+		buf_[1] = value; // Set GPIOB0-7 high or low
+
+		if ((write(fileDescr_, buf_, 2)) != 2) {		// Send register we want to read from (2 bytes)
+			printf("Error writing to i2c slave\n");
+			exit(1);
+		}
+	}
+
+	byte Get_Register(byte reg){
+		buf_[0] = reg;
+
+		if ((write(fileDescr_, buf_, 1)) != 1) {		// Send register we want to read from (1 byte)
+			printf("Error writing to i2c slave\n");
+			exit(1);
+		}
+
+		if ((read(fileDescr_, buf_, 1)) != 1) {		// Read  (1 byte)
+			printf("Error writing to i2c slave\n");
+			exit(1);
+		}
+
+		return buf_[0];
+	}
+
+public:
+
+	Gpio_Expander(const char *fileName, byte mcp_address) {
 		fileName_ = fileName;
 		mcp_address_ = mcp_address;
 		fileDescr_ = 0;
+		IODIRA_= 0x00;
+		IODIRB_= 0x01;
+		GPIOA_ = 0x12;
+		GPIOB_ = 0x13;
 	}
 
 	void Initialize(){
@@ -122,35 +161,31 @@ public:
 
 	}
 
-	void Configure_Port_B(byte value){
-		// This is the register we want to read from:
-		buf_[0] = 0x01;
-		buf_[1] = value; // Set GPIO0-7 to outputs
-
-		if ((write(fileDescr_, buf_, 2)) != 2) {		// Send register we want to read from (2 bytes)
-			printf("Error writing to i2c slave\n");
-			exit(1);
-		}
+	void Configure_PortA(byte value){
+		Set_Register(IODIRA_, value);
 	}
 
-	void Set_Port_B(byte value){
-		buf_[0] = GPIOB_;
-		buf_[1] = value; // Set GPIOB0-7 high or low
-
-		if ((write(fileDescr_, buf_, 2)) != 2) {		// Send register we want to read from (2 bytes)
-			printf("Error writing to i2c slave\n");
-			exit(1);
-		}
+	void Configure_PortB(byte value){
+		Set_Register(IODIRB_, value);
 	}
-private:
-	int fileDescr_;							// File description
-	const char *fileName_;	// Name of the port we will be using (1 for Rev. 2, 0-Rev.1)
-	byte  mcp_address_;      		// I2C Address of MCP23017 Chip
-	byte  GPIOA_;						// Register Address of Port A
-	byte  GPIOB_;						// Register Address of Port B
-	unsigned char buf_[10];					// Buffer for data being read/ written on the i2c bus
 
+	void Set_PortA(byte value){
+		Set_Register(GPIOA_, value);
+	}
+
+	void Set_PortB(byte value){
+		Set_Register(GPIOB_, value);
+	}
+
+	byte Get_PortA(){
+		return Get_Register(GPIOA_);
+	}
+
+	byte Get_PortB(){
+		return Get_Register(GPIOB_);
+	}
 };
+
 
 void Test_Gpio_Expander() {
 
@@ -162,16 +197,16 @@ void Test_Gpio_Expander() {
 
 	Gpio_Expander gpio1(filename.c_str(), 0x20);	//To instantiate a GPIO object (first GPIO chip)
 	gpio1.Initialize();
-	gpio1.Configure_Port_B(0x00);	//Configure port B pins as outputs
+	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
 
 	for(i = 0; i < 8; i++){ // Test three outputs from one GPIO (turn on and off 3 LEDs sequentially)
-		gpio1.Set_Port_B(i);
+		gpio1.Set_PortB(i);
 		if(nanosleep(&tim , &tim2) < 0 ){
 			printf("Nano sleep system call failed \n");
 		}
 	}
-	gpio1.Set_Port_B(0x00);	// Set GPIOB0-7 low
-	gpio1.Configure_Port_B(0xFF); // Leave GPIOB0-7 as inputs
+	gpio1.Set_PortB(0x00);	// Set GPIOB0-7 low
+	gpio1.Configure_PortB(0xFF); // Leave GPIOB0-7 as inputs
 
 }
 
@@ -180,8 +215,9 @@ void Test_MUX(){
 	tim.tv_sec = 0;
 	tim.tv_nsec = 10000000L;
 	string filename = "/dev/i2c-1";
-	const int MUX_CHANNELS = 4;
-	byte board[4][4];
+	const int MUX_CHANNELS = 8;
+	byte board[8][8];
+	byte button;
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -190,29 +226,56 @@ void Test_MUX(){
 
 	Gpio_Expander gpio1(filename.c_str(), 0x20);	//To instantiate a GPIO object (first GPIO chip)
 	gpio1.Initialize();
-	gpio1.Configure_Port_B(0x00);	//Configure port B pins as outputs
+	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
+	gpio1.Configure_PortA(0xFF);	//Configure port A pins as inputs
 
-	for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
-		gpio1.Set_Port_B(1<<mux_channel);
-		/*if(nanosleep(&tim , &tim2) < 0 ){
-			printf("Nano sleep system call failed \n");
-		}*/
-		a2d_1.Read();
-		a2d_2.Read();
-		board[mux_channel][0] = a2d_1.Get(0);
-		board[mux_channel][1] = a2d_1.Get(1);
-		board[mux_channel][2] = a2d_2.Get(0);
-		board[mux_channel][3] = a2d_2.Get(1);
-	}
+	for(int readings = 0; readings < 60; readings++){
 
-	system("clear");
-	for(int row = 0; row < 4; row++){
-		for(int col = 0; col < 4; col++){
-			printf("%x\t", board[row][col]);
+		for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
+			gpio1.Set_PortB(1<<mux_channel);
+			/*if(nanosleep(&tim , &tim2) < 0 ){
+				printf("Nano sleep system call failed \n");
+			}*/
+			a2d_1.Read();
+			a2d_2.Read();
+			board[mux_channel][0] = a2d_1.Get(0);
+			board[mux_channel][1] = a2d_1.Get(1);
+			board[mux_channel][2] = a2d_1.Get(2);
+			board[mux_channel][3] = a2d_1.Get(3);
+			board[mux_channel][4] = a2d_2.Get(0);
+			board[mux_channel][5] = a2d_2.Get(1);
+			board[mux_channel][6] = a2d_2.Get(2);
+			board[mux_channel][7] = a2d_2.Get(3);
+		}
+
+		system("clear");
+		for(int row = 0; row < 8; row++){
+			for(int col = 0; col < 8; col++){
+				printf("%x\t", board[row][col]);
+			}
+			printf("\n");
 		}
 		printf("\n");
+
+		for(int row = 0; row < 8; row++){
+			for(int col = 0; col < 8; col++){
+				if(board[row][col] < 0x25){
+					printf("x\t");
+				}else{
+					printf("o\t");
+				}
+			}
+			printf("\n");
+		}
+		printf("\n");
+
+		button = gpio1.Get_PortA();
+
+		printf("Button: %d\n", button & 0x01);
+
+		sleep(1);
+
 	}
-	printf("\n");
 
 }
 
