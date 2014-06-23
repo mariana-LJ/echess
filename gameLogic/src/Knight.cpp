@@ -32,131 +32,114 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
   square destination7;
   square destination8;
 
+  if(current.column >= 0 && current.column < 6){
+    destination1.column = current.column + 2; // 2 places right
+    destination2.column = current.column + 2;
+    if(current.row > 0){
+      destination1.row = current.row - 1; // 1 place up
+      destination1.piece = board[destination1.row][destination1.column];
+
+      if(destination1.piece == '.' ){
+        possibleMoves_.push_back(destination1);
+      }
+      else if((color == 'w' && destination1.piece > 'a') ||
+    		  (color == 'b' && destination1.piece < 'a')){
+        possibleMoves_.push_back(destination1);
+      }
+    }
+    if(current.row < 7){
+      destination2.row = current.row + 1; // 1 place down
+      destination2.piece = board[destination2.row][destination2.column];
+
+      if(destination2.piece == '.'){
+        possibleMoves_.push_back(destination2);
+      }
+      else if((color == 'w' && destination2.piece > 'a') ||
+    		  (color == 'b' && destination2.piece < 'a')){
+        possibleMoves_.push_back(destination2);
+      }
+    }
+  }
+  if(current.row <= 7 && current.row > 1){
+    destination3.row = current.row - 2; // 2 places up
+    destination4.row = current.row - 2;
+    if(current.column < 7){
+      destination3.column = current.column + 1; // 1 place right
+      destination3.piece = board[destination3.row][destination3.column];
+
+      if(destination3.piece == '.'){
+        possibleMoves_.push_back(destination3);
+      }
+      else if((color == 'w' && destination3.piece > 'a') ||
+    		  (color == 'b' && destination3.piece < 'a')){
+        possibleMoves_.push_back(destination3);
+      }
+    }
+    if(current.column > 0){
+      destination4.column = current.column - 1; // 1 place left
+      destination4.piece = board[destination4.row][destination4.column];
+
+      if(destination4.piece == '.'){
+        possibleMoves_.push_back(destination4);
+      }
+      else if((color == 'w' && destination4.piece > 'a') ||
+    		  (color == 'b' && destination4.piece < 'a')){
+        possibleMoves_.push_back(destination4);
+      }
+    }
+  }
+  if(current.column > 1 && current.column <= 7){
+    destination5.column = current.column - 2; // 2 places to the left
+    destination6.column = current.column - 2;
+    if(current.row > 0){
+      destination5.row = current.row - 1; // 1 place up
+      destination5.piece = board[destination5.row][destination5.column];
+
+      if(destination5.piece == '.'){
+        possibleMoves_.push_back(destination5);
+      }
+      else if((color == 'w' && destination5.piece > 'a') ||
+    		  (color == 'b' && destination5.piece < 'a')){
+        possibleMoves_.push_back(destination5);
+      }
+    }
+    if(current.row < 7){
+      destination6.row = current.row + 1; // 1 place down
+      destination6.piece = board[destination6.row][destination6.column];
+
+      if(destination6.piece == '.'){
+        possibleMoves_.push_back(destination6);
+      }
+      else if((color == 'w' && destination6.piece > 'a') ||
+    		  (color == 'b' && destination6.piece < 'a')){
+        possibleMoves_.push_back(destination6);
+      }
+    }
+  }
   if(current.row >= 0 && current.row < 6){
-    destination1.row = current.row + 2; // 2 places right
-    destination2.row = current.row + 2;
+    destination7.row = current.row + 2; // 2 places down
+    destination8.row = current.row + 2;
+    if(current.column < 7){
+      destination7.column = current.column + 1; // 1 place right
+      destination7.piece = board[destination7.row][destination7.column];
+
+      if(destination7.piece == '.'){
+        possibleMoves_.push_back(destination7);
+      }
+      else if((color == 'w' && destination7.piece > 'a') ||
+    		  (color == 'b' && destination7.piece < 'a')){
+        possibleMoves_.push_back(destination7);
+      }
+    }
     if(current.column > 0){
-      destination1.column = current.column - 1; // 1 place up
-      destination1.piece = pieceName;
+      destination8.column = current.column - 1; // 1 place left
+      destination8.piece = board[destination8.row][destination8.column];
 
-      if(board[destination1.row][destination1.column] == '.' ){
-        possibleMoves_.push_back(destination1);
-      }
-      else if(color == 'w' && board[destination1.row][destination1.column] > 'a'){
-        possibleMoves_.push_back(destination1);
-      }
-      else if(color == 'b' && board[destination1.row][destination1.column] < 'a'){
-        possibleMoves_.push_back(destination1);
-      }
-    }
-    else if(current.column < 7){
-      destination2.column = current.column + 1; // 1 place down
-      destination2.piece = pieceName;
-
-      if(board[destination2.row][destination2.column] == '.'){
-        possibleMoves_.push_back(destination2);
-      }
-      else if(color == 'w' && board[destination2.row][destination2.column] > 'a'){
-        possibleMoves_.push_back(destination2);
-      }
-      else if(color == 'b' && board[destination2.row][destination2.column] < 'a'){
-        possibleMoves_.push_back(destination2);
-      }
-    }
-  }
-  else if(current.column <= 7 && current.column > 1){
-    destination3.column = current.column - 2; // 2 places up
-    destination4.column = current.column - 2;
-    if(current.row < 7){
-      destination3.row = current.row + 1; // 1 place right
-      destination3.piece = pieceName;
-
-      if(board[destination3.row][destination3.column] == '.'){
-        possibleMoves_.push_back(destination3);
-      }
-      else if(color == 'w' && board[destination3.row][destination3.column] > 'a'){
-        possibleMoves_.push_back(destination3);
-      }
-      else if(color == 'b' && board[destination3.row][destination3.column] < 'a'){
-        possibleMoves_.push_back(destination3);
-      }
-    }
-    else if(current.row > 0){
-      destination4.row = current.row - 1; // 1 place left
-      destination4.piece = pieceName;
-
-      if(board[destination4.row][destination4.column] == '.'){
-        possibleMoves_.push_back(destination4);
-      }
-      else if(color == 'w' && board[destination4.row][destination4.column] > 'a'){
-        possibleMoves_.push_back(destination4);
-      }
-      else if(color == 'b' && board[destination4.row][destination4.column] < 'a'){
-        possibleMoves_.push_back(destination4);
-      }
-    }
-  }
-  else if(current.row > 1 && current.row <= 7){
-    destination5.row = current.row - 2; // 2 places to the left
-    destination6.row = current.row - 2;
-    if(current.column > 0){
-      destination5.column = current.column - 1; // 1 place up
-      destination5.piece = pieceName;
-
-      if(board[destination5.row][destination5.column] == '.'){
-        possibleMoves_.push_back(destination5);
-      }
-      else if(color == 'w' && board[destination5.row][destination5.column] > 'a'){
-        possibleMoves_.push_back(destination5);
-      }
-      else if(color == 'b' && board[destination5.row][destination5.column] < 'a'){
-        possibleMoves_.push_back(destination5);
-      }
-
-    }
-    else if(current.column < 7){
-      destination6.column = current.column + 1; // 1 place down
-      destination6.piece = pieceName;
-
-      if(board[destination6.row][destination6.column] == '.'){
-        possibleMoves_.push_back(destination6);
-      }
-      else if(color == 'w' && board[destination6.row][destination6.column] > 'a'){
-        possibleMoves_.push_back(destination6);
-      }
-      else if(color == 'b' && board[destination6.row][destination6.column] < 'a'){
-        possibleMoves_.push_back(destination6);
-      }
-    }
-  }
-  else if(current.column >= 0 && current.column < 6){
-    destination7.column = current.column + 2; // 2 places down
-    destination8.column = current.column + 2;
-    if(current.row < 7){
-      destination7.row = current.row + 1; // 1 place right
-      destination7.piece = pieceName;
-
-      if(board[destination7.row][destination7.column] == '.'){
-        possibleMoves_.push_back(destination7);
-      }
-      else if(color == 'w' && board[destination7.row][destination7.column] > 'a'){
-        possibleMoves_.push_back(destination7);
-      }
-      else if(color == 'b' && board[destination7.row][destination7.column] < 'a'){
-        possibleMoves_.push_back(destination7);
-      }
-    }
-    else if(current.row > 0){
-      destination8.row = current.row - 1; // 1 place left
-      destination8.piece = pieceName;
-
-      if(board[destination8.row][destination8.column] == '.'){
+      if(destination8.piece == '.'){
         possibleMoves_.push_back(destination8);
       }
-      else if(color == 'w' && board[destination8.row][destination8.column] > 'a'){
-        possibleMoves_.push_back(destination8);
-      }
-      else if(color == 'b' && board[destination8.row][destination8.column] < 'a'){
+      else if((color == 'w' && destination8.piece > 'a') ||
+    		  (color == 'b' && destination8.piece < 'a')){
         possibleMoves_.push_back(destination8);
       }
     }

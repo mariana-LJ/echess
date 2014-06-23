@@ -257,7 +257,7 @@ void Test_MUX(){
 		}
 		printf("\n");
 
-		for(int row = 0; row < 8; row++){
+		for(int row = 7; row > -1; row--){
 			for(int col = 0; col < 8; col++){
 				if(board[row][col] < 0x25){
 					printf("x\t");
