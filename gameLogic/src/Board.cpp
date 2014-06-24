@@ -14,6 +14,8 @@
 #include "common.h"
 #include "Pawn.h"
 #include "Knight.h"
+#include "Bishop.h"
+#include "Rook.h"
 
 using namespace std;
 
@@ -35,17 +37,25 @@ public:
 	}
 
 	vector<square> getMoves(square origin){
-	  vector<square> result;
+	vector<square> result;
 
-		switch(board_[origin.row][origin.column]){
+	switch(board_[origin.row][origin.column]){
 		case ('P'):
-    case('p'):
-        result = Pawn::getMoves(origin, board_);
-				break;
-    case ('N'):
+		case('p'):
+        	result = Pawn::getMoves(origin, board_);
+			break;
+		case ('N'):
 		case('n'):
 		    result = Knight::getMoves(origin, board_);
-				break;
+			break;
+		case('B'):
+		case('b'):
+			result = Bishop::getMoves(origin, board_);
+			break;
+		case('R'):
+		case('r'):
+			result = Rook::getMoves(origin, board_);
+			break;
 		default:
 				printf("Invalid move.\n");
 			break;
@@ -103,10 +113,11 @@ private:
 int main(void){
 	Board b;
 	square s;
-	s.row = 1;
-	s.column = 4;
+	s.row = 0;
+	s.column = 1;
 	vector<square> m = b.getMoves(s);
 	cout << endl;
+	cout << "Possible moves: " << endl;
 	for(vector<square>::iterator it = m.begin(); it != m.end(); ++it) {
 	  cout << it->row << "," << it->column << endl;
 	}
