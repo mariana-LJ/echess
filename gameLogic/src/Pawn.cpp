@@ -19,86 +19,86 @@ Pawn::~Pawn() {
 }
 
 
-vector<square> Pawn::getMoves(square & current, vector<vector<char> >& board){
+vector<movement> Pawn::getMoves(movement & current, vector<vector<char> >& board){
   // No en passant or promotion considered yet
-  vector<square> possibleMoves_;
-  char color = (board[current.row][current.column] == 'P')? 'w': 'b';
-  char pieceName = board[current.row][current.column];
+  vector<movement> possibleMoves_;
+  char color = (board[current.origin_row][current.origin_column] == 'P')? 'w': 'b';
+  char pieceName = board[current.origin_row][current.origin_column];
 
-  square destination1;
-  square destination2;
-  square destination3;
-  square destination4;
+  movement destination1(current);
+  movement destination2(current);
+  movement destination3(current);
+  movement destination4(current);
 
   if(color == 'w'){
-    if(current.row == 1){ // the first move for a white pawn
-      if(board[current.row+1][current.column] == '.'){ // check if possible next square is empty
-        destination1.row = current.row + 1;
-        destination1.column = current.column;
+    if(current.origin_row == 1){ // the first move for a white pawn
+      if(board[current.origin_row+1][current.origin_column] == '.'){ // check if possible next square is empty
+        destination1.target_row = current.origin_row + 1;
+        destination1.target_column = current.origin_column;
         destination1.piece = pieceName;
         possibleMoves_.push_back(destination1);
       }
-      if(board[current.row+2][current.column] == '.'){
-        destination2.row = current.row + 2;
-        destination2.column = current.column;
+      if(board[current.origin_row+2][current.origin_column] == '.'){
+        destination2.target_row = current.origin_row + 2;
+        destination2.target_column = current.origin_column;
         destination2.piece = pieceName;
         possibleMoves_.push_back(destination2);
       }
     }
-    else if(current.row < 7){ // after the first move for a white pawn
-      destination1.row = current.row + 1;
-      destination1.column = current.column;
+    else if(current.origin_row < 7){ // after the first move for a white pawn
+      destination1.target_row = current.origin_row + 1;
+      destination1.target_column = current.origin_column;
       possibleMoves_.push_back(destination1);
     }
-    if(current.row < 7 && current.column > 0){// check if white can take a black piece to the left
-      if(board[current.row+1][current.column-1] > 'a'){
-    	destination3.row = current.row+1;
-    	destination3.column = current.column-1;
+    if(current.origin_row < 7 && current.origin_column > 0){// check if white can take a black piece to the left
+      if(is_black(board[current.origin_row+1][current.origin_column-1])){
+    	destination3.target_row = current.origin_row+1;
+    	destination3.target_column = current.origin_column-1;
         destination3.piece = pieceName;
         possibleMoves_.push_back(destination3);
       }
     }
-    if(current.row < 7 && current.column < 7){// check if white can take a black piece to the right
-      if(board[current.column+1][current.row+1] > 'a'){
-    	destination4.row = current.row+1;
-    	destination4.column = current.column+1;
+    if(current.origin_row < 7 && current.origin_column < 7){// check if white can take a black piece to the right
+      if(is_black(board[current.origin_column+1][current.origin_row+1])){
+    	destination4.target_row = current.origin_row+1;
+    	destination4.target_column = current.origin_column+1;
         destination4.piece = pieceName;
         possibleMoves_.push_back(destination4);
       }
     }
   }
   else{
-    if(current.row == 6){ // the first move for a black pawn
-      if(board[current.row-1][current.column] == '.'){ // check if possible next square is empty
-    	destination1.row = current.row - 1;
-    	destination1.column = current.column;
+    if(current.origin_row == 6){ // the first move for a black pawn
+      if(board[current.origin_row-1][current.origin_column] == '.'){ // check if possible next square is empty
+    	destination1.target_row = current.origin_row - 1;
+    	destination1.target_column = current.origin_column;
         destination1.piece = pieceName;
         possibleMoves_.push_back(destination1);
       }
-      if(board[current.row-2][current.column] == '.'){
-    	destination2.row = current.row - 2;
-    	destination2.column = current.column;
+      if(board[current.origin_row-2][current.origin_column] == '.'){
+    	destination2.target_row = current.origin_row - 2;
+    	destination2.target_column = current.origin_column;
         destination2.piece = pieceName;
         possibleMoves_.push_back(destination2);
       }
     }
-    else if(current.row > 0){ // after the first move for a black pawn
-      destination1.row = current.row - 1;
-      destination1.column = current.column;
+    else if(current.origin_row > 0){ // after the first move for a black pawn
+      destination1.target_row = current.origin_row - 1;
+      destination1.target_column = current.origin_column;
       possibleMoves_.push_back(destination1);
     }
-    if(current.row > 0 && current.column < 7){// check if black can take a white piece to the right
-      if(board[current.row-1][current.column+1] < 'a'){
-    	destination3.row = current.row-1;
-    	destination3.column = current.column+1;
+    if(current.origin_row > 0 && current.origin_column < 7){// check if black can take a white piece to the right
+      if(is_white(board[current.origin_row-1][current.origin_column+1])){
+    	destination3.target_row = current.origin_row-1;
+    	destination3.target_column = current.origin_column+1;
         destination3.piece = pieceName;
         possibleMoves_.push_back(destination3);
       }
     }
-      if(current.row > 0 && current.column > 0){// check if black can take a white piece to the left
-        if(board[current.row-1][current.column-1] < 'a'){
-          destination4.row = current.row-1;
-          destination4.column = current.column-1;
+      if(current.origin_row > 0 && current.origin_column > 0){// check if black can take a white piece to the left
+        if(is_white(board[current.origin_row-1][current.origin_column-1])){
+          destination4.target_row = current.origin_row-1;
+          destination4.target_column = current.origin_column-1;
           destination4.piece = pieceName;
           possibleMoves_.push_back(destination4);
         }

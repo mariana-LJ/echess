@@ -15,7 +15,7 @@ class Bishop {
 public:
 	Bishop();
 	virtual ~Bishop();
-	static std::vector<square> getMoves(square & current, std::vector<std::vector<char> >& board);
+	static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
 };
 
 #endif /* BISHOP_H_ */

@@ -15,7 +15,7 @@ class Rook {
 public:
 	Rook();
 	virtual ~Rook();
-	static std::vector<square> getMoves(square & current, std::vector<std::vector<char> >& board);
+	static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
 };
 
 #endif /* ROOK_H_ */

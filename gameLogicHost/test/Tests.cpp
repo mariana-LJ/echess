@@ -12,22 +12,28 @@ int main(int argc, char **argv) {
   return RUN_ALL_TESTS();
 }
 
-bool findMove(vector<square> & moves, square & move) {
-  for(vector<square>::iterator it = moves.begin(); it != moves.end(); ++it) {
-    if(it->row == move.row && it->column == move.column) {
-      return true;
+vector<movement>::iterator findMove(vector<movement> & moves, int row, int column) {
+  vector<movement>::iterator it;
+  for(it = moves.begin(); it != moves.end(); ++it) {
+    if(it->target_row == row && it->target_column == column) {
+      break;
     }
   }
-  return false;
+  return it;
 }
 
 TEST(MovePawn, Test1) {
   Board b;
-  square s(1,4);
-  vector<square> moves = b.getMoves(s);
+  vector<movement> moves = b.getMoves(1,4);
   ASSERT_EQ(moves.size(),2);
-  s.row = 2; s.column = 4;
-  ASSERT_TRUE(findMove(moves,s));
-  s.row = 3; s.column = 4;
-  ASSERT_TRUE(findMove(moves,s));
+  ASSERT_NE(findMove(moves, 2, 4), moves.end());
+  ASSERT_NE(findMove(moves, 3, 4), moves.end());
+  b.move(*findMove(moves, 3, 4));
+  moves = b.getMoves(6,4);
+  ASSERT_EQ(moves.size(),2);
+  ASSERT_NE(findMove(moves, 5, 4), moves.end());
+  ASSERT_NE(findMove(moves, 4, 4), moves.end());
+  b.move(*findMove(moves, 4, 4));
+  moves = b.getMoves(3,4);
+  ASSERT_EQ(moves.size(),0);
 }

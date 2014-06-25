@@ -15,7 +15,7 @@ class Pawn {
 public:
   Pawn();
   virtual ~Pawn();
-  static std::vector<square> getMoves(square & current, std::vector<std::vector<char> >& board);
+  static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
 };
 
 #endif /* PAWN_H_ */

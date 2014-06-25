@@ -33,10 +33,11 @@ void Board::printBoard(){
   }
 }
 
-vector<square> Board::getMoves(square origin){
-  vector<square> result;
+vector<movement> Board::getMoves(int row, int column){
+  vector<movement> result;
+  movement origin(row, column);
 
-  switch(board_[origin.row][origin.column]){
+  switch(board_[origin.origin_row][origin.origin_column]){
     case ('P'):
     case('p'):
           result = Pawn::getMoves(origin, board_);
@@ -99,6 +100,11 @@ void Board::initializeBoard(){
       board_[row][col] = '.';
     }
   }
+}
+
+void Board::move(movement move) {
+  board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+  board_[move.origin_row][move.origin_column] = '.';
 }
 
 /*int main(void){

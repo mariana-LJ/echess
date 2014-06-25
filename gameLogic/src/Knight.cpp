@@ -18,26 +18,26 @@ Knight::~Knight() {
   // TODO Auto-generated destructor stub
 }
 
-vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
-  vector<square> possibleMoves_;
-  char color = (board[current.row][current.column] == 'N')? 'w': 'b';
-  char pieceName = board[current.row][current.column];
+vector<movement> Knight::getMoves(movement & current, vector<vector<char> >& board){
+  vector<movement> possibleMoves_;
+  char color = (board[current.target_row][current.target_column] == 'N')? 'w': 'b';
+  char pieceName = board[current.target_row][current.target_column];
 
-  square destination1;
-  square destination2;
-  square destination3;
-  square destination4;
-  square destination5;
-  square destination6;
-  square destination7;
-  square destination8;
+  movement destination1;
+  movement destination2;
+  movement destination3;
+  movement destination4;
+  movement destination5;
+  movement destination6;
+  movement destination7;
+  movement destination8;
 
-  if(current.column >= 0 && current.column < 6){
-    destination1.column = current.column + 2; // 2 places right
-    destination2.column = current.column + 2;
-    if(current.row > 0){
-      destination1.row = current.row - 1; // 1 place up
-      destination1.piece = board[destination1.row][destination1.column];
+  if(current.target_column >= 0 && current.target_column < 6){
+    destination1.target_column = current.target_column + 2; // 2 places right
+    destination2.target_column = current.target_column + 2;
+    if(current.target_row > 0){
+      destination1.target_row = current.target_row - 1; // 1 place up
+      destination1.piece = board[destination1.target_row][destination1.target_column];
 
       if(destination1.piece == '.' ){
         possibleMoves_.push_back(destination1);
@@ -47,9 +47,9 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
         possibleMoves_.push_back(destination1);
       }
     }
-    if(current.row < 7){
-      destination2.row = current.row + 1; // 1 place down
-      destination2.piece = board[destination2.row][destination2.column];
+    if(current.target_row < 7){
+      destination2.target_row = current.target_row + 1; // 1 place down
+      destination2.piece = board[destination2.target_row][destination2.target_column];
 
       if(destination2.piece == '.'){
         possibleMoves_.push_back(destination2);
@@ -60,12 +60,12 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
       }
     }
   }
-  if(current.row <= 7 && current.row > 1){
-    destination3.row = current.row - 2; // 2 places up
-    destination4.row = current.row - 2;
-    if(current.column < 7){
-      destination3.column = current.column + 1; // 1 place right
-      destination3.piece = board[destination3.row][destination3.column];
+  if(current.target_row <= 7 && current.target_row > 1){
+    destination3.target_row = current.target_row - 2; // 2 places up
+    destination4.target_row = current.target_row - 2;
+    if(current.target_column < 7){
+      destination3.target_column = current.target_column + 1; // 1 place right
+      destination3.piece = board[destination3.target_row][destination3.target_column];
 
       if(destination3.piece == '.'){
         possibleMoves_.push_back(destination3);
@@ -75,9 +75,9 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
         possibleMoves_.push_back(destination3);
       }
     }
-    if(current.column > 0){
-      destination4.column = current.column - 1; // 1 place left
-      destination4.piece = board[destination4.row][destination4.column];
+    if(current.target_column > 0){
+      destination4.target_column = current.target_column - 1; // 1 place left
+      destination4.piece = board[destination4.target_row][destination4.target_column];
 
       if(destination4.piece == '.'){
         possibleMoves_.push_back(destination4);
@@ -88,12 +88,12 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
       }
     }
   }
-  if(current.column > 1 && current.column <= 7){
-    destination5.column = current.column - 2; // 2 places to the left
-    destination6.column = current.column - 2;
-    if(current.row > 0){
-      destination5.row = current.row - 1; // 1 place up
-      destination5.piece = board[destination5.row][destination5.column];
+  if(current.target_column > 1 && current.target_column <= 7){
+    destination5.target_column = current.target_column - 2; // 2 places to the left
+    destination6.target_column = current.target_column - 2;
+    if(current.target_row > 0){
+      destination5.target_row = current.target_row - 1; // 1 place up
+      destination5.piece = board[destination5.target_row][destination5.target_column];
 
       if(destination5.piece == '.'){
         possibleMoves_.push_back(destination5);
@@ -103,9 +103,9 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
         possibleMoves_.push_back(destination5);
       }
     }
-    if(current.row < 7){
-      destination6.row = current.row + 1; // 1 place down
-      destination6.piece = board[destination6.row][destination6.column];
+    if(current.target_row < 7){
+      destination6.target_row = current.target_row + 1; // 1 place down
+      destination6.piece = board[destination6.target_row][destination6.target_column];
 
       if(destination6.piece == '.'){
         possibleMoves_.push_back(destination6);
@@ -116,12 +116,12 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
       }
     }
   }
-  if(current.row >= 0 && current.row < 6){
-    destination7.row = current.row + 2; // 2 places down
-    destination8.row = current.row + 2;
-    if(current.column < 7){
-      destination7.column = current.column + 1; // 1 place right
-      destination7.piece = board[destination7.row][destination7.column];
+  if(current.target_row >= 0 && current.target_row < 6){
+    destination7.target_row = current.target_row + 2; // 2 places down
+    destination8.target_row = current.target_row + 2;
+    if(current.target_column < 7){
+      destination7.target_column = current.target_column + 1; // 1 place right
+      destination7.piece = board[destination7.target_row][destination7.target_column];
 
       if(destination7.piece == '.'){
         possibleMoves_.push_back(destination7);
@@ -131,9 +131,9 @@ vector<square> Knight::getMoves(square & current, vector<vector<char> >& board){
         possibleMoves_.push_back(destination7);
       }
     }
-    if(current.column > 0){
-      destination8.column = current.column - 1; // 1 place left
-      destination8.piece = board[destination8.row][destination8.column];
+    if(current.target_column > 0){
+      destination8.target_column = current.target_column - 1; // 1 place left
+      destination8.piece = board[destination8.target_row][destination8.target_column];
 
       if(destination8.piece == '.'){
         possibleMoves_.push_back(destination8);

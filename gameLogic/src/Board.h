@@ -10,7 +10,8 @@ public:
 
   Board();
   void printBoard();
-  std::vector<square> getMoves(square origin);
+  std::vector<movement> getMoves(int row, int column);
+  void move(movement move);
 
 private:
   int rows_;
