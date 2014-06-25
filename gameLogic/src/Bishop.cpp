@@ -20,26 +20,26 @@ Bishop::~Bishop() {
 
 vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& board){
 	vector<movement> possibleMoves;
-	char color = (board[current.target_row][current.target_column] == 'B')? 'w': 'b';
-	char pieceName = board[current.target_row][current.target_column];
-	int temp_row = current.target_row;;
-	int temp_col = current.target_column;
+	char color = (board[current.origin_row][current.origin_column] == 'B')? 'w': 'b';
+	char pieceName = board[current.origin_row][current.origin_column];
+	int temp_row = current.origin_row;;
+	int temp_col = current.origin_column;
 
 	//Upper right diagonal
-	while((temp_row > 0) && (temp_col < 7)){
-		movement newSquare;
-		temp_row -= 1;
+	while((temp_row < 7) && (temp_col < 7)){
+		movement newMove;
+		temp_row += 1;
 		temp_col += 1;
-		newSquare.target_row = temp_row;
-		newSquare.target_column = temp_col;
-		newSquare.piece = board[temp_row][temp_col];
+		newMove.target_row = temp_row;
+		newMove.target_column = temp_col;
+		newMove.piece = board[temp_row][temp_col];
 
-		if(newSquare.piece == '.' ){
-			possibleMoves.push_back(newSquare);
+		if(newMove.piece == '.' ){
+			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && newSquare.piece > 'a') ||
-			(color == 'b' && newSquare.piece < 'a')){
-		    possibleMoves.push_back(newSquare);
+		else if((color == 'w' && is_black(newMove.piece)) ||
+				(color == 'b' && is_white(newMove.piece))){
+		    possibleMoves.push_back(newMove);
 		}
 		else{
 			break;
@@ -47,23 +47,23 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 	}
 
 	//Upper left diagonal
-	temp_row = current.target_row;
-	temp_col = current.target_column;
+	temp_row = current.origin_row;
+	temp_col = current.origin_column;
 
-	while((temp_row > 0) && (temp_col > 0)){
-		movement newSquare;
-		temp_row -= 1;
+	while((temp_row < 7) && (temp_col > 0)){
+		movement newMove;
+		temp_row += 1;
 		temp_col -= 1;
-		newSquare.target_row = temp_row;
-		newSquare.target_column = temp_col;
-		newSquare.piece = board[temp_row][temp_col];
+		newMove.target_row = temp_row;
+		newMove.target_column = temp_col;
+		newMove.piece = board[temp_row][temp_col];
 
-		if(newSquare.piece == '.' ){
-			possibleMoves.push_back(newSquare);
+		if(newMove.piece == '.' ){
+			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && newSquare.piece > 'a') ||
-			(color == 'b' && newSquare.piece < 'a')){
-		    possibleMoves.push_back(newSquare);
+		else if((color == 'w' && is_black(newMove.piece)) ||
+				(color == 'b' && is_white(newMove.piece))){
+		    possibleMoves.push_back(newMove);
 		}
 		else{
 			break;
@@ -71,23 +71,23 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 	}
 
 	//Lower left diagonal
-	temp_row = current.target_row;
-	temp_col = current.target_column;
+	temp_row = current.origin_row;
+	temp_col = current.origin_column;
 
-	while((temp_row < 7) && (temp_col > 0)){
-		movement newSquare;
-		temp_row += 1;
+	while((temp_row > 0) && (temp_col > 0)){
+		movement newMove;
+		temp_row -= 1;
 		temp_col -= 1;
-		newSquare.target_row = temp_row;
-		newSquare.target_column = temp_col;
-		newSquare.piece = board[temp_row][temp_col];
+		newMove.target_row = temp_row;
+		newMove.target_column = temp_col;
+		newMove.piece = board[temp_row][temp_col];
 
-		if(newSquare.piece == '.' ){
-			possibleMoves.push_back(newSquare);
+		if(newMove.piece == '.' ){
+			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && newSquare.piece > 'a') ||
-			(color == 'b' && newSquare.piece < 'a')){
-		    possibleMoves.push_back(newSquare);
+		else if((color == 'w' && is_black(newMove.piece)) ||
+				(color == 'b' && is_white(newMove.piece))){
+		    possibleMoves.push_back(newMove);
 		}
 		else{
 			break;
@@ -95,23 +95,23 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 	}
 
 	// Lower right diagonal
-	temp_row = current.target_row;
-	temp_col = current.target_column;
+	temp_row = current.origin_row;
+	temp_col = current.origin_column;
 
-	while((temp_row < 7) && (temp_col < 7)){
-		movement newSquare;
-		temp_row += 1;
+	while((temp_row > 0) && (temp_col < 7)){
+		movement newMove;
+		temp_row -= 1;
 		temp_col += 1;
-		newSquare.target_row = temp_row;
-		newSquare.target_column = temp_col;
-		newSquare.piece = board[temp_row][temp_col];
+		newMove.target_row = temp_row;
+		newMove.target_column = temp_col;
+		newMove.piece = board[temp_row][temp_col];
 
-		if(newSquare.piece == '.' ){
-			possibleMoves.push_back(newSquare);
+		if(newMove.piece == '.' ){
+			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && newSquare.piece > 'a') ||
-			(color == 'b' && newSquare.piece < 'a')){
-		    possibleMoves.push_back(newSquare);
+		else if((color == 'w' && is_black(newMove.piece)) ||
+				(color == 'b' && is_white(newMove.piece))){
+		    possibleMoves.push_back(newMove);
 		}
 		else{
 			break;

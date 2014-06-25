@@ -37,18 +37,21 @@ vector<movement> Pawn::getMoves(movement & current, vector<vector<char> >& board
         destination1.target_column = current.origin_column;
         destination1.piece = pieceName;
         possibleMoves_.push_back(destination1);
-      }
-      if(board[current.origin_row+2][current.origin_column] == '.'){
-        destination2.target_row = current.origin_row + 2;
-        destination2.target_column = current.origin_column;
-        destination2.piece = pieceName;
-        possibleMoves_.push_back(destination2);
+
+        if(board[current.origin_row+2][current.origin_column] == '.'){ // check two squares ahead
+        	destination2.target_row = current.origin_row + 2;
+            destination2.target_column = current.origin_column;
+            destination2.piece = pieceName;
+            possibleMoves_.push_back(destination2);
+        }
       }
     }
     else if(current.origin_row < 7){ // after the first move for a white pawn
-      destination1.target_row = current.origin_row + 1;
-      destination1.target_column = current.origin_column;
-      possibleMoves_.push_back(destination1);
+      if(board[current.origin_row+1][current.origin_column] == '.'){
+    	  destination1.target_row = current.origin_row + 1;
+    	  destination1.target_column = current.origin_column;
+    	  possibleMoves_.push_back(destination1);
+      }
     }
     if(current.origin_row < 7 && current.origin_column > 0){// check if white can take a black piece to the left
       if(is_black(board[current.origin_row+1][current.origin_column-1])){
