@@ -67,3 +67,31 @@ TEST(MoveRook, Test1){
   ASSERT_EQ(moves.size(),2);
 
 }
+
+TEST(BigTest, Test1){
+  Board b;
+  int indexMove;
+  vector<movement> moves = b.getMoves(1,3);
+
+  ASSERT_NE(findMove(moves, 3, 3), moves.end());
+  b.move(moves.at(1)); // Queen's pawn to (3,3)
+
+  moves = b.getMoves(6,3);
+  ASSERT_NE(findMove(moves, 4, 3), moves.end());
+  indexMove = distance(moves.begin(), findMove(moves, 4, 3));
+  b.move(moves.at(indexMove)); // Black Queen's pawn to (4,3)
+
+  moves = b.getMoves(0,1); // White Knight from (0,1) to (2,2)
+  ASSERT_EQ(moves.size(),3);
+  indexMove = distance(moves.begin(), findMove(moves, 2, 2));
+  b.move(moves.at(indexMove));
+
+  moves = b.getMoves(7,6); // Black Knight from (7,6) to (5,5)
+  indexMove = distance(moves.begin(), findMove(moves, 5, 5));
+  b.move(moves.at(indexMove));
+
+  moves = b.getMoves(7,6); // White bishop from (0,2) to (4,6)
+  ASSERT_EQ(moves.size(),5);
+  indexMove = distance(moves.begin(), findMove(moves, 4, 6));
+  b.move(moves.at(indexMove));
+}
