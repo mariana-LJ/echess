@@ -18,20 +18,6 @@ Knight::~Knight() {
   // TODO Auto-generated destructor stub
 }
 
-
-void Knight::ValidateMove(movement & move, char color, vector<vector<char> >& board, vector<movement> & possibleMoves) {
-    if(move.target_row >= 0 && move.target_row <= 7 &&
-       move.target_column >= 0 && move.target_column <= 7) {
-        if(board[move.target_row][move.target_column] == '.' ){
-            possibleMoves.push_back(move);
-        }
-        else if((color == 'w' && is_black(board[move.target_row][move.target_column])) ||
-                (color == 'b' && is_white(board[move.target_row][move.target_column]))){
-            possibleMoves.push_back(move);
-        }
-    }
-}
-
 vector<movement> Knight::getMoves(movement & current, vector<vector<char> >& board){
     vector<movement> possibleMoves;
     char color = (board[current.origin_row][current.origin_column] == 'N')? 'w': 'b';

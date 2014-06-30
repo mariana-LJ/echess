@@ -35,15 +35,9 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
+		ValidateMove(newMove, color, board, possibleMoves);
+
+		if(board[newMove.target_row][newMove.target_column] != '.' ){
 			break;
 		}
 	}
@@ -58,17 +52,11 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	//Lower left diagonal
@@ -81,17 +69,11 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	// Lower right diagonal
@@ -104,17 +86,11 @@ vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& boa
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	return possibleMoves;

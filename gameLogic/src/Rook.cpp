@@ -34,17 +34,11 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	// Left squares
@@ -57,17 +51,11 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	// Bottom squares
@@ -80,17 +68,11 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	// Right squares
@@ -103,17 +85,11 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
 
-		if(board[newMove.target_row][newMove.target_column] == '.' ){
-			possibleMoves.push_back(newMove);
-		}
-		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
-				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
-		    possibleMoves.push_back(newMove);
-		    break;
-		}
-		else{
-			break;
-		}
+        ValidateMove(newMove, color, board, possibleMoves);
+
+        if(board[newMove.target_row][newMove.target_column] != '.' ){
+            break;
+        }
 	}
 
 	return possibleMoves;

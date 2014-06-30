@@ -128,10 +128,38 @@ TEST(BigTest, Test1){
   b.move(*findMove(moves, 3,6));
 
   moves = b.getMoves(5,5); // Black knight from (5,5) to (3,6) takes white pawn
-  b.printBoard();
   ASSERT_EQ(moves.size(), 5);
   ASSERT_NE(findMove(moves, 3,6), moves.end());
   b.move(*findMove(moves, 3,6));
 
+  moves = b.getMoves(0, 7); // White rook from (0,7) to (0,6)
+  ASSERT_EQ(moves.size(), 1);
+  ASSERT_NE(findMove(moves, 0,6), moves.end());
+  b.move(*findMove(moves, 0,6));
+
+  moves = b.getMoves(6,0); // Black pawn from (6,0) to (4,0)
+  ASSERT_EQ(moves.size(), 2);
+  ASSERT_NE(findMove(moves, 4,0), moves.end());
+  b.move(*findMove(moves, 4,0));
+
+  moves = b.getMoves(0,6); // White rook from (0,6) to (3,6) takes black knight
+  ASSERT_EQ(moves.size(), 4);
+  ASSERT_NE(findMove(moves, 3,6), moves.end());
+  b.move(*findMove(moves, 3,6));
+
+  moves = b.getMoves(7,0); // Black rook from (7,0) to (5,0)
+  ASSERT_EQ(moves.size(), 2);
+  ASSERT_NE(findMove(moves, 5,0), moves.end());
+  b.move(*findMove(moves, 5,0));
+
+  moves = b.getMoves(0,5); // White bishop from (0,5) to (3,2)
+  ASSERT_EQ(moves.size(), 6);
+  ASSERT_NE(findMove(moves, 3,2), moves.end());
+  b.move(*findMove(moves, 3,2));
+
+  moves = b.getMoves(5,0); // Black rook from (5,0) to (5,5)
+  ASSERT_EQ(moves.size(), 9);
+  ASSERT_NE(findMove(moves, 5,5), moves.end());
+  b.move(*findMove(moves, 5,5));
 }
 
