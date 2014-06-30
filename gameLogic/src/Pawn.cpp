@@ -61,8 +61,8 @@ vector<movement> Pawn::getMoves(movement & current, vector<vector<char> >& board
         possibleMoves_.push_back(destination3);
       }
     }
-    if(current.origin_row < 7 && current.origin_column < 7){// check if white can take a black piece to the right
-      if(is_black(board[current.origin_column+1][current.origin_row+1])){
+    if(current.origin_row < 7 && current.origin_column > 7){// check if white can take a black piece to the right
+      if(is_black(board[current.origin_row+1][current.origin_column+1])){
     	destination4.target_row = current.origin_row+1;
     	destination4.target_column = current.origin_column+1;
         destination4.piece = pieceName;
@@ -73,22 +73,25 @@ vector<movement> Pawn::getMoves(movement & current, vector<vector<char> >& board
   else{
     if(current.origin_row == 6){ // the first move for a black pawn
       if(board[current.origin_row-1][current.origin_column] == '.'){ // check if possible next square is empty
-    	destination1.target_row = current.origin_row - 1;
-    	destination1.target_column = current.origin_column;
-        destination1.piece = pieceName;
-        possibleMoves_.push_back(destination1);
-      }
-      if(board[current.origin_row-2][current.origin_column] == '.'){
-    	destination2.target_row = current.origin_row - 2;
-    	destination2.target_column = current.origin_column;
-        destination2.piece = pieceName;
-        possibleMoves_.push_back(destination2);
+    	  destination1.target_row = current.origin_row - 1;
+    	  destination1.target_column = current.origin_column;
+    	  destination1.piece = pieceName;
+    	  possibleMoves_.push_back(destination1);
+
+    	  if(board[current.origin_row-2][current.origin_column] == '.'){
+    		  destination2.target_row = current.origin_row - 2;
+    		  destination2.target_column = current.origin_column;
+    		  destination2.piece = pieceName;
+    		  possibleMoves_.push_back(destination2);
+    	  }
       }
     }
     else if(current.origin_row > 0){ // after the first move for a black pawn
-      destination1.target_row = current.origin_row - 1;
-      destination1.target_column = current.origin_column;
-      possibleMoves_.push_back(destination1);
+    	if(board[current.origin_row-1][current.origin_column] == '.'){
+    		destination1.target_row = current.origin_row - 1;
+    		destination1.target_column = current.origin_column;
+    		possibleMoves_.push_back(destination1);
+    	}
     }
     if(current.origin_row > 0 && current.origin_column < 7){// check if black can take a white piece to the right
       if(is_white(board[current.origin_row-1][current.origin_column+1])){

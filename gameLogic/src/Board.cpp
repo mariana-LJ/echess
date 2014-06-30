@@ -31,6 +31,7 @@ void Board::printBoard(){
     }
     printf("\n");
   }
+  printf("\n");
 }
 
 vector<movement> Board::getMoves(int row, int column){

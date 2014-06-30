@@ -25,20 +25,22 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	int temp_row = current.origin_row;;
 	int temp_col = current.origin_column;
 
+	movement newMove(current);
+	newMove.piece = pieceName;
+
 	//Top squares
 	while(temp_row < 7){
-		movement newMove;
 		temp_row += 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
-		newMove.piece = board[temp_row][temp_col];
 
-		if(newMove.piece == '.' ){
+		if(board[newMove.target_row][newMove.target_column] == '.' ){
 			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && is_black(newMove.piece)) ||
-				(color == 'b' && is_white(newMove.piece))){
+		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
+				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
 		    possibleMoves.push_back(newMove);
+		    break;
 		}
 		else{
 			break;
@@ -50,18 +52,18 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	temp_col = current.origin_column;
 
 	while(temp_col > 0){
-		movement newMove;
+		movement newMove(current);
 		temp_col -= 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
-		newMove.piece = board[temp_row][temp_col];
 
-		if(newMove.piece == '.' ){
+		if(board[newMove.target_row][newMove.target_column] == '.' ){
 			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && is_black(newMove.piece)) ||
-				(color == 'b' && is_white(newMove.piece))){
+		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
+				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
 		    possibleMoves.push_back(newMove);
+		    break;
 		}
 		else{
 			break;
@@ -73,18 +75,18 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	temp_col = current.origin_column;
 
 	while(temp_row > 0){
-		movement newMove;
+		movement newMove(current);
 		temp_row -= 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
-		newMove.piece = board[temp_row][temp_col];
 
-		if(newMove.piece == '.' ){
+		if(board[newMove.target_row][newMove.target_column] == '.' ){
 			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && is_black(newMove.piece)) ||
-				(color == 'b' && is_white(newMove.piece))){
+		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
+				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
 		    possibleMoves.push_back(newMove);
+		    break;
 		}
 		else{
 			break;
@@ -96,18 +98,18 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	temp_col = current.origin_column;
 
 	while(temp_col < 7){
-		movement newMove;
+		movement newMove(current);
 		temp_col += 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
-		newMove.piece = board[temp_row][temp_col];
 
-		if(newMove.piece == '.' ){
+		if(board[newMove.target_row][newMove.target_column] == '.' ){
 			possibleMoves.push_back(newMove);
 		}
-		else if((color == 'w' && is_black(newMove.piece)) ||
-				(color == 'b' && is_white(newMove.piece))){
+		else if((color == 'w' && is_black(board[newMove.target_row][newMove.target_column])) ||
+				(color == 'b' && is_white(board[newMove.target_row][newMove.target_column]))){
 		    possibleMoves.push_back(newMove);
+		    break;
 		}
 		else{
 			break;

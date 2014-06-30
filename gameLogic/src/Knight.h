@@ -16,6 +16,8 @@ public:
   Knight();
   virtual ~Knight();
   static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+private:
+  static void ValidateMove(movement & move, char color, std::vector<std::vector<char> >& board, std::vector<movement> & possibleMoves);
 };
 
 #endif /* KNIGHT_H_ */
