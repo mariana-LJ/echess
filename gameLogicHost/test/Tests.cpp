@@ -163,3 +163,17 @@ TEST(BigTest, Test1){
   b.move(*findMove(moves, 5,5));
 }
 
+TEST(MoveQueen, Test1){
+  Board b;
+  vector<movement> moves = b.getMoves(1,3); // Move front pawn first
+  ASSERT_EQ(moves.size(), 2);
+  ASSERT_NE(findMove(moves, 3,3), moves.end());
+  b.move(*findMove(moves, 3,3));
+
+  moves = b.getMoves(0,3); // Move Queen from (0,3) to (2,3)
+  ASSERT_EQ(moves.size(), 2);
+  ASSERT_NE(findMove(moves, 2,3), moves.end());
+  b.move(*findMove(moves, 2,3));
+  ASSERT_EQ(moves.size(), 16);
+
+}

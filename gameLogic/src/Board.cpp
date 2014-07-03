@@ -17,6 +17,7 @@
 #include "Knight.h"
 #include "Bishop.h"
 #include "Rook.h"
+#include "Queen.h"
 
 using namespace std;
 
@@ -54,6 +55,10 @@ vector<movement> Board::getMoves(int row, int column){
     case('R'):
     case('r'):
       result = Rook::getMoves(origin, board_);
+      break;
+    case('Q'):
+    case('q'):
+      result = Queen::getMoves(origin, board_);
       break;
     default:
         printf("Invalid move.\n");
