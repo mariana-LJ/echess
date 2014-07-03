@@ -20,7 +20,7 @@ Bishop::~Bishop() {
 
 vector<movement> Bishop::getMoves(movement & current, vector<vector<char> >& board){
 	vector<movement> possibleMoves;
-	char color = (board[current.origin_row][current.origin_column] == 'B')? 'w': 'b';
+	char color = is_white(board[current.origin_row][current.origin_column])? 'w': 'b';
 	char pieceName = board[current.origin_row][current.origin_column];
 	int temp_row = current.origin_row;;
 	int temp_col = current.origin_column;

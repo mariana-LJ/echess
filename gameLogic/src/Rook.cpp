@@ -20,7 +20,7 @@ Rook::~Rook() {
 
 vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board){
 	vector<movement> possibleMoves;
-	char color = (board[current.origin_row][current.origin_column] == 'R')? 'w': 'b';
+	char color = is_white(board[current.origin_row][current.origin_column])? 'w': 'b';
 	char pieceName = board[current.origin_row][current.origin_column];
 	int temp_row = current.origin_row;;
 	int temp_col = current.origin_column;
@@ -46,7 +46,6 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	temp_col = current.origin_column;
 
 	while(temp_col > 0){
-		movement newMove(current);
 		temp_col -= 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
@@ -63,7 +62,6 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	temp_col = current.origin_column;
 
 	while(temp_row > 0){
-		movement newMove(current);
 		temp_row -= 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
@@ -80,7 +78,6 @@ vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board
 	temp_col = current.origin_column;
 
 	while(temp_col < 7){
-		movement newMove(current);
 		temp_col += 1;
 		newMove.target_row = temp_row;
 		newMove.target_column = temp_col;
