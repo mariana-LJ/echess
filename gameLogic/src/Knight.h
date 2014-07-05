@@ -2,7 +2,7 @@
  * Knight.h
  *
  *  Created on: Jun 19, 2014
- *      Author: acp
+ *      Author: mlj
  */
 
 #ifndef KNIGHT_H_

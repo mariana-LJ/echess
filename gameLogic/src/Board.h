@@ -1,3 +1,9 @@
+/*
+ * board.h
+ *
+ *  Created on: May 23, 2014
+ *      Author: mlj
+ */
 
 #ifndef BOARD_H_
 #define BOARD_H_

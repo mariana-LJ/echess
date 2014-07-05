@@ -2,7 +2,7 @@
  * common.h
  *
  *  Created on: Jun 19, 2014
- *      Author: acp
+ *      Author: mlj
  */
 
 #ifndef COMMON_H_
