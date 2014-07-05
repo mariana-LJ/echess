@@ -190,11 +190,36 @@ TEST(MoveKing, Test1){
     ASSERT_EQ(moves.size(), 1);
     ASSERT_NE(findMove(moves, 1,4), moves.end());
     b.move(*findMove(moves, 1,4));
+
     moves = b.getMoves(1,4); // Move White King from (1,4) to (2,4)
     ASSERT_EQ(moves.size(), 4);
     ASSERT_NE(findMove(moves, 2,4), moves.end());
     b.move(*findMove(moves, 2,4));
-    ASSERT_EQ(moves.size(), 5);
 
+    moves = b.getMoves(2,4);
+    ASSERT_EQ(moves.size(), 5);
+}
+
+TEST(MoveKing, Test2){ // Test the detection of the first move of the King
+    Board b;
+    vector<movement> moves = b.getMoves(1,4); // Move front pawn first
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 3,4), moves.end());
+    b.move(*findMove(moves, 3,4));
+
+    moves = b.getMoves(0,4); // Move White King from (0,4) to (1,4)
+    ASSERT_EQ(moves.size(), 1);
+    ASSERT_NE(findMove(moves, 1,4), moves.end());
+    b.move(*findMove(moves, 1,4));
+
+    moves = b.getMoves(1,5); // Move white pawn from (0,5) to (3,5)
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 3,5), moves.end());
+    b.move(*findMove(moves, 3,5));
+
+    moves = b.getMoves(1,4); // Move White King from (0,4) to (1,4)
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_NE(findMove(moves, 2,5), moves.end());
+    b.move(*findMove(moves, 2,5));
 
 }

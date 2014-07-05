@@ -23,17 +23,61 @@
 using namespace std;
 
 Board::Board(){
-  initializeBoard();
+    initializeBoard();
+}
+
+void Board::initializeBoard(){
+    rows_ = 8;
+    columns_ = 8;
+    whiteShortCastleAvailable_ = true;
+    whiteLongCastleAvailable_ = true;
+    blackShortCastleAvailable_ = true;
+    blackLongCastleAvailable_ = true;
+
+    // initialize vector
+    board_.resize(rows_);
+    for(int i=0; i < rows_; ++i) {
+        board_[i].resize(columns_);
+    }
+
+    board_[0][0] = 'R';
+    board_[0][1] = 'N';
+    board_[0][2] = 'B';
+    board_[0][3] = 'Q';
+    board_[0][4] = 'K';
+    board_[0][5] = 'B';
+    board_[0][6] = 'N';
+    board_[0][7] = 'R';
+
+    board_[7][0] = 'r';
+    board_[7][1] = 'n';
+    board_[7][2] = 'b';
+    board_[7][3] = 'q';
+    board_[7][4] = 'k';
+    board_[7][5] = 'b';
+    board_[7][6] = 'n';
+    board_[7][7] = 'r';
+
+    for(int col = 0; col < columns_; col++){
+        board_[1][col] = 'P';
+        board_[6][col] = 'p';
+    }
+
+    for(int row = 2; row < 6; row++){
+        for(int col = 0; col< columns_; col++){
+            board_[row][col] = '.';
+        }
+    }
 }
 
 void Board::printBoard(){
-  for(int row = rows_- 1; row >= 0; --row){
-    for(int col = 0; col < columns_; col++){
-      printf("%c\t", board_[row][col]);
+    for(int row = rows_- 1; row >= 0; --row){
+        for(int col = 0; col < columns_; col++){
+            cout << board_[row][col] << '\t';
+        }
+        cout << endl;
     }
-    printf("\n");
-  }
-  printf("\n");
+    cout << endl;
 }
 
 vector<movement> Board::getMoves(int row, int column){
@@ -73,45 +117,6 @@ vector<movement> Board::getMoves(int row, int column){
   return result;
 }
 
-void Board::initializeBoard(){
-  rows_ = 8;
-  columns_ = 8;
-
-  // initialize vector
-  board_.resize(rows_);
-  for(int i=0; i < rows_; ++i) {
-    board_[i].resize(columns_);
-  }
-
-  board_[0][0] = 'R';
-  board_[0][1] = 'N';
-  board_[0][2] = 'B';
-  board_[0][3] = 'Q';
-  board_[0][4] = 'K';
-  board_[0][5] = 'B';
-  board_[0][6] = 'N';
-  board_[0][7] = 'R';
-
-  board_[7][0] = 'r';
-  board_[7][1] = 'n';
-  board_[7][2] = 'b';
-  board_[7][3] = 'q';
-  board_[7][4] = 'k';
-  board_[7][5] = 'b';
-  board_[7][6] = 'n';
-  board_[7][7] = 'r';
-
-  for(int col = 0; col < columns_; col++){
-    board_[1][col] = 'P';
-    board_[6][col] = 'p';
-  }
-
-  for(int row = 2; row < 6; row++){
-    for(int col = 0; col< columns_; col++){
-      board_[row][col] = '.';
-    }
-  }
-}
 
 void Board::move(movement move) {
   board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
