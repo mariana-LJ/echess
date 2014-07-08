@@ -81,46 +81,68 @@ void Board::printBoard(){
 }
 
 vector<movement> Board::getMoves(int row, int column){
-  vector<movement> result;
-  movement origin(row, column);
+    vector<movement> result;
+    movement origin(row, column);
 
-  switch(board_[origin.origin_row][origin.origin_column]){
-    case ('P'):
-    case('p'):
-          result = Pawn::getMoves(origin, board_);
-      break;
-    case ('N'):
-    case('n'):
-        result = Knight::getMoves(origin, board_);
-      break;
-    case('B'):
-    case('b'):
-      result = Bishop::getMoves(origin, board_);
-      break;
-    case('R'):
-    case('r'):
-      result = Rook::getMoves(origin, board_);
-      break;
-    case('Q'):
-    case('q'):
-      result = Queen::getMoves(origin, board_);
-      break;
-    case('K'):
-    case('k'):
-      result = King::getMoves(origin, board_);
-      break;
-    default:
-        printf("Invalid move.\n");
-      break;
-  }
+    switch(board_[origin.origin_row][origin.origin_column]){
+        case ('P'):
+        case('p'):
+              result = Pawn::getMoves(origin, board_);
+          break;
+        case ('N'):
+        case('n'):
+            result = Knight::getMoves(origin, board_);
+          break;
+        case('B'):
+        case('b'):
+          result = Bishop::getMoves(origin, board_);
+          break;
+        case('R'):
+        case('r'):
+          result = Rook::getMoves(origin, board_);
+          break;
+        case('Q'):
+        case('q'):
+          result = Queen::getMoves(origin, board_);
+          break;
+        case('K'):
+        case('k'):
+          result = King::getMoves(origin, board_);
+          break;
+        default:
+            printf("Invalid move.\n");
+          break;
+    }
 
-  return result;
+    return result;
 }
 
 
 void Board::move(movement move) {
-  board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
-  board_[move.origin_row][move.origin_column] = '.';
+    if(board_[move.origin_row][move.origin_column] == 'K'){
+
+    }
+    else if(board_[move.origin_row][move.origin_column] == 'k'){
+
+    }
+    board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+    board_[move.origin_row][move.origin_column] = '.';
+    if(board_[move.origin_row][move.origin_column] == 'R' && move.origin_row == 0){
+        if(move.origin_column == 7){
+            whiteShortCastleAvailable_ = false;
+        }
+        else if(move.origin_column == 0){
+            whiteLongCastleAvailable_ = false;
+        }
+    }
+    else if(board_[move.origin_row][move.origin_column] == 'r' && move.origin_row == 7){
+        if(move.origin_column == 7){
+            blackShortCastleAvailable_ = false;
+        }
+        else if(move.origin_column == 0){
+            blackLongCastleAvailable_ = false;
+        }
+    }
 }
 
 /*int main(void){
