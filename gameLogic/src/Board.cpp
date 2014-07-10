@@ -119,30 +119,87 @@ vector<movement> Board::getMoves(int row, int column){
 
 
 void Board::move(movement move) {
-    if(board_[move.origin_row][move.origin_column] == 'K'){
-
+    if(board_[move.origin_row][move.origin_column] == 'K'){ // White king
+        if(move.target_column == (move.origin_column + 2)){  // King's side castle
+            if(whiteShortCastleAvailable_){
+             board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+             board_[move.origin_row][move.origin_column] = '.';
+             board_[move.origin_row][move.origin_column + 1] = board_[0][7];
+             board_[0][7] = '.';
+            }
+            else{
+                cout << "Invalid move" << endl;
+            }
+        }
+        else if(move.target_column == (move.origin_column - 2)){ // or Queen's side castle
+            if(whiteLongCastleAvailable_){
+                board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+                board_[move.origin_row][move.origin_column] = '.';
+                board_[move.origin_row][move.origin_column - 1] = board_[0][0];
+                board_[0][0] = '.';
+            }
+            else{
+                cout << "Invalid move" << endl;
+            }
+        }
+        else{
+            board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+            board_[move.origin_row][move.origin_column] = '.';
+        }
+        whiteShortCastleAvailable_ = false;
+        whiteLongCastleAvailable_ = false;
     }
     else if(board_[move.origin_row][move.origin_column] == 'k'){
+        if(move.target_column == (move.origin_column + 2)){
+            if(blackShortCastleAvailable_){
+               board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+               board_[move.origin_row][move.origin_column] = '.';
+               board_[move.origin_row][move.origin_column + 1] = board_[7][7];
+               board_[7][7] = '.';
+            }
+            else{
+                cout << "Invalid move" << endl;
+            }
+        }
+        else if(move.target_column == (move.origin_column - 2)){
+            if(blackLongCastleAvailable_){
+               board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+               board_[move.origin_row][move.origin_column] = '.';
+               board_[move.origin_row][move.origin_column - 1] = board_[7][0];
+               board_[7][0] = '.';
+            }
+            else{
+                cout << "Invalid move" << endl;
+            }
+        }
+        else{
+            board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+            board_[move.origin_row][move.origin_column] = '.';
+        }
+        blackShortCastleAvailable_ = false;
+        blackLongCastleAvailable_ = false;
+   }
+   else{
+        board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
+        board_[move.origin_row][move.origin_column] = '.';
+        if(board_[move.origin_row][move.origin_column] == 'R' && move.origin_row == 0){
+            if(move.origin_column == 7){
+                whiteShortCastleAvailable_ = false;
+            }
+            else if(move.origin_column == 0){
+                whiteLongCastleAvailable_ = false;
+            }
+        }
+        else if(board_[move.origin_row][move.origin_column] == 'r' && move.origin_row == 7){
+            if(move.origin_column == 7){
+                blackShortCastleAvailable_ = false;
+            }
+            else if(move.origin_column == 0){
+                blackLongCastleAvailable_ = false;
+            }
+        }
+    }
 
-    }
-    board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
-    board_[move.origin_row][move.origin_column] = '.';
-    if(board_[move.origin_row][move.origin_column] == 'R' && move.origin_row == 0){
-        if(move.origin_column == 7){
-            whiteShortCastleAvailable_ = false;
-        }
-        else if(move.origin_column == 0){
-            whiteLongCastleAvailable_ = false;
-        }
-    }
-    else if(board_[move.origin_row][move.origin_column] == 'r' && move.origin_row == 7){
-        if(move.origin_column == 7){
-            blackShortCastleAvailable_ = false;
-        }
-        else if(move.origin_column == 0){
-            blackLongCastleAvailable_ = false;
-        }
-    }
 }
 
 /*int main(void){

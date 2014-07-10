@@ -16,6 +16,9 @@ public:
     King();
     virtual ~King();
     static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+private:
+    static bool isShortCastleAvailable(movement & current, std::vector<std::vector<char> >& board);
+    static bool isLongCastleAvailable(movement & current, std::vector<std::vector<char> >& board);
 };
 
 #endif /* KING_H_ */

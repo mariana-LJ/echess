@@ -223,3 +223,131 @@ TEST(MoveKing, Test2){ // Test the detection of the first move of the King
     b.move(*findMove(moves, 2,5));
 
 }
+
+TEST(WhiteCastle, Test1){ // Test short castle in ideal sequence
+    Board b;
+    vector<movement> moves = b.getMoves(1,4); // Move front pawn first
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 2,4), moves.end());
+    b.move(*findMove(moves, 2,4));
+
+    moves = b.getMoves(0,5); // Move white bishop from (0,5) to (2,3)
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_NE(findMove(moves, 2,3), moves.end());
+    b.move(*findMove(moves, 2,3));
+
+    moves = b.getMoves(0,6); // Move white knight from (0,6) to (2,5)
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 2,5), moves.end());
+    b.move(*findMove(moves, 2,5));
+
+    moves = b.getMoves(0,4); // Do short castle
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 0,6), moves.end());
+    b.move(*findMove(moves, 0,6));
+
+    moves = b.getMoves(0,5); // Check position of rook
+    ASSERT_EQ(moves.size(), 1);
+}
+
+TEST(WhiteCastle, Test2){ // Test that short castle can't be performed
+    Board b;
+    vector<movement> moves = b.getMoves(1,4); // Move front pawn first
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 2,4), moves.end());
+    b.move(*findMove(moves, 2,4));
+
+    moves = b.getMoves(0,5); // Move white bishop from (0,5) to (2,3)
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_NE(findMove(moves, 2,3), moves.end());
+    b.move(*findMove(moves, 2,3));
+
+    moves = b.getMoves(0,6); // Move white knight from (0,6) to (2,5)
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 2,5), moves.end());
+    b.move(*findMove(moves, 2,5));
+
+    moves = b.getMoves(0,4); // Move the white King
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 1,4), moves.end());
+    b.move(*findMove(moves, 1,4));
+
+    moves = b.getMoves(1,4); // Return King to original position
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 0,4), moves.end());
+    b.move(*findMove(moves, 0,4));
+
+    moves = b.getMoves(0,4); // Try to do short castle
+    ASSERT_EQ(moves.size(), 3); // Castle is apparently possible
+    ASSERT_NE(findMove(moves, 0,6), moves.end()); // It is included but it can't be done
+    b.move(*findMove(moves, 0,6));
+
+}
+
+TEST(WhiteCastle, Test3){ // Move rook at (0,7). Short castle should not be allowed
+    Board b;
+    vector<movement> moves = b.getMoves(1,4); // Move front pawn first
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 2,4), moves.end());
+    b.move(*findMove(moves, 2,4));
+
+    moves = b.getMoves(0,5); // Move white bishop from (0,5) to (2,3)
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_NE(findMove(moves, 2,3), moves.end());
+    b.move(*findMove(moves, 2,3));
+
+    moves = b.getMoves(0,6); // Move white knight from (0,6) to (2,5)
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 2,5), moves.end());
+    b.move(*findMove(moves, 2,5));
+
+    moves = b.getMoves(0,7); // White rook from (0,7) to (0,5)
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 0,5), moves.end());
+    b.move(*findMove(moves, 0,5));
+
+    moves = b.getMoves(0,5); // White rook back to (0,7)
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 0,7), moves.end());
+    b.move(*findMove(moves, 0,7));
+
+    moves = b.getMoves(0,4); // Try to castle
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 0,6), moves.end());
+    b.move(*findMove(moves, 0,6)); // Invalid move message triggered
+}
+
+TEST(WhiteCastle, Test4){ // Long castle in ideal sequence
+    Board b;
+    vector<movement> moves = b.getMoves(1,4); // Move front pawn first
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 2,4), moves.end());
+    b.move(*findMove(moves, 2,4));
+
+    moves = b.getMoves(0,3); // Move white Queen from (0,3) to (4,7)
+    ASSERT_EQ(moves.size(), 4);
+    ASSERT_NE(findMove(moves, 4,7), moves.end());
+    b.move(*findMove(moves, 4,7));
+
+    moves = b.getMoves(1,1); // Move white pawn from (1,1) to (2,1)
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 2,1), moves.end());
+    b.move(*findMove(moves, 2,1));
+
+    moves = b.getMoves(0,2); // Move white bishop from (0,2) to (1,1)
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 1,1), moves.end());
+    b.move(*findMove(moves, 1,1));
+
+    moves = b.getMoves(0,1); // Move white knight from (0,1) to (2,2)
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_NE(findMove(moves, 2,2), moves.end());
+    b.move(*findMove(moves, 2,2));
+
+    moves = b.getMoves(0,4); // Do long castle
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_NE(findMove(moves, 0,2), moves.end());
+    b.move(*findMove(moves, 0,2));
+}
+
+

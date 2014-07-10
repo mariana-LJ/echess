@@ -20,6 +20,43 @@ King::~King() {
     // TODO Auto-generated destructor stub
 }
 
+bool King::isShortCastleAvailable(movement & current, vector<vector<char> >& board){
+    if(board[current.origin_row][current.origin_column] == 'K' &&
+       (current.origin_row == 0 && current.origin_column == 4)){
+        return(board[current.origin_row][current.origin_column + 1] == '.' &&
+               board[current.origin_row][current.origin_column + 2] == '.' &&
+               board[current.origin_row][current.origin_column + 3] == 'R');
+    }
+    else if(board[current.origin_row][current.origin_column] == 'k' &&
+            (current.origin_row == 7 && current.origin_column == 4)){
+        return(board[current.origin_row][current.origin_column + 1] == '.' &&
+               board[current.origin_row][current.origin_column + 2] == '.' &&
+               board[current.origin_row][current.origin_column + 3] == 'r');
+    }
+    else{
+        return false;
+    }
+}
+
+bool King::isLongCastleAvailable(movement & current, vector<vector<char> >& board){
+    if(board[current.origin_row][current.origin_column] == 'K' &&
+       (current.origin_row == 0 && current.origin_column == 4)){
+        return(board[current.origin_row][current.origin_column - 1] == '.' &&
+               board[current.origin_row][current.origin_column - 2] == '.' &&
+               board[current.origin_row][current.origin_column - 3] == '.' &&
+               board[current.origin_row][current.origin_column - 4] == 'R');
+    }
+    else if(board[current.origin_row][current.origin_column] == 'k' &&
+            (current.origin_row == 7 && current.origin_column == 4)){
+        return(board[current.origin_row][current.origin_column - 1] == '.' &&
+               board[current.origin_row][current.origin_column - 2] == '.' &&
+               board[current.origin_row][current.origin_column - 3] == '.' &&
+               board[current.origin_row][current.origin_column - 4] == 'r');
+    }
+    else{
+        return false;
+    }
+}
 
 // No check, check mate or castle implemented yet
 vector<movement> King::getMoves(movement & current, vector<vector<char> >& board){
@@ -72,6 +109,20 @@ vector<movement> King::getMoves(movement & current, vector<vector<char> >& board
     newMove.target_row = current.origin_row;
     newMove.target_column = current.origin_column + 1;
     ValidateMove(newMove, color, board, possibleMoves);
+
+    // Short castle
+    if(isShortCastleAvailable(current, board)){
+        newMove.target_row = current.origin_row;
+        newMove.target_column = current.origin_column + 2;
+        possibleMoves.push_back(newMove);
+    }
+
+    // Long castle
+    if(isLongCastleAvailable(current, board)){
+        newMove.target_row = current.origin_row;
+        newMove.target_column = current.origin_column - 2;
+        possibleMoves.push_back(newMove);
+    }
 
     return possibleMoves;
 }
