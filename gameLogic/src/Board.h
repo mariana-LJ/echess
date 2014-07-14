@@ -18,6 +18,11 @@ public:
     void printBoard();
     std::vector<movement> getMoves(int row, int column);
     void move(movement move);
+    std::vector<char> & operator[](std::size_t index);
+    bool whiteShortCastleAvailable() { return whiteShortCastleAvailable_; }
+    bool whiteLongCastleAvailable() { return whiteLongCastleAvailable_; }
+    bool blackShortCastleAvailable() { return blackShortCastleAvailable_; }
+    bool blackLongCastleAvailable() { return blackLongCastleAvailable_; }
 
 private:
     int rows_;
@@ -27,6 +32,10 @@ private:
     bool whiteLongCastleAvailable_;
     bool blackShortCastleAvailable_;
     bool blackLongCastleAvailable_;
+    bool whiteToMove_;
+    int enPassantColumn_;
+    int enPassantRow_;
+    int enPassantRowCapture_;
 
     void initializeBoard();
 };

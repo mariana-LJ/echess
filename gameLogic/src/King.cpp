@@ -8,6 +8,7 @@
 #include <iostream>
 #include "King.h"
 #include "common.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -20,38 +21,34 @@ King::~King() {
     // TODO Auto-generated destructor stub
 }
 
-bool King::isShortCastleAvailable(movement & current, vector<vector<char> >& board){
-    if(board[current.origin_row][current.origin_column] == 'K' &&
-       (current.origin_row == 0 && current.origin_column == 4)){
-        return(board[current.origin_row][current.origin_column + 1] == '.' &&
-               board[current.origin_row][current.origin_column + 2] == '.' &&
-               board[current.origin_row][current.origin_column + 3] == 'R');
+bool King::isShortCastleAvailable(movement & current, Board& board){
+    if(current.origin_row == 0){
+        return(board.whiteShortCastleAvailable() &&
+               board[current.origin_row][current.origin_column + 1] == '.' &&
+               board[current.origin_row][current.origin_column + 2] == '.');
     }
-    else if(board[current.origin_row][current.origin_column] == 'k' &&
-            (current.origin_row == 7 && current.origin_column == 4)){
-        return(board[current.origin_row][current.origin_column + 1] == '.' &&
-               board[current.origin_row][current.origin_column + 2] == '.' &&
-               board[current.origin_row][current.origin_column + 3] == 'r');
+    else if(current.origin_row == 7){
+        return(board.blackShortCastleAvailable() &&
+               board[current.origin_row][current.origin_column + 1] == '.' &&
+               board[current.origin_row][current.origin_column + 2] == '.');
     }
     else{
         return false;
     }
 }
 
-bool King::isLongCastleAvailable(movement & current, vector<vector<char> >& board){
-    if(board[current.origin_row][current.origin_column] == 'K' &&
-       (current.origin_row == 0 && current.origin_column == 4)){
-        return(board[current.origin_row][current.origin_column - 1] == '.' &&
+bool King::isLongCastleAvailable(movement & current, Board& board){
+    if(current.origin_row == 0){
+        return(board.whiteLongCastleAvailable() &&
+               board[current.origin_row][current.origin_column - 1] == '.' &&
                board[current.origin_row][current.origin_column - 2] == '.' &&
-               board[current.origin_row][current.origin_column - 3] == '.' &&
-               board[current.origin_row][current.origin_column - 4] == 'R');
+               board[current.origin_row][current.origin_column - 3] == '.');
     }
-    else if(board[current.origin_row][current.origin_column] == 'k' &&
-            (current.origin_row == 7 && current.origin_column == 4)){
-        return(board[current.origin_row][current.origin_column - 1] == '.' &&
+    else if(current.origin_row == 7){
+        return(board.blackLongCastleAvailable() &&
+               board[current.origin_row][current.origin_column - 1] == '.' &&
                board[current.origin_row][current.origin_column - 2] == '.' &&
-               board[current.origin_row][current.origin_column - 3] == '.' &&
-               board[current.origin_row][current.origin_column - 4] == 'r');
+               board[current.origin_row][current.origin_column - 3] == '.');
     }
     else{
         return false;
@@ -59,7 +56,7 @@ bool King::isLongCastleAvailable(movement & current, vector<vector<char> >& boar
 }
 
 // No check, check mate or castle implemented yet
-vector<movement> King::getMoves(movement & current, vector<vector<char> >& board){
+vector<movement> King::getMoves(movement & current, Board& board){
     vector<movement> possibleMoves;
 
     char color = is_white(board[current.origin_row][current.origin_column])? 'w': 'b';

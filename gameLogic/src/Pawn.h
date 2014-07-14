@@ -11,14 +11,16 @@
 #include <vector>
 #include "common.h"
 
+class Board;
+
 class Pawn {
 public:
   Pawn();
   virtual ~Pawn();
-  static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+  static std::vector<movement> getMoves(movement & current, Board& board);
 private:
-  static void takePiece(movement & move, char color, std::vector<std::vector<char> >& board, std::vector<movement> & possibleMoves);
-  static void move(movement & move, char color, std::vector<std::vector<char> >& board, std::vector<movement> & possibleMoves);
+  static void takePiece(movement & move, char color, Board& board, std::vector<movement> & possibleMoves);
+  static void move(movement & move, char color, Board& board, std::vector<movement> & possibleMoves);
 };
 
 #endif /* PAWN_H_ */

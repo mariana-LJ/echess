@@ -11,11 +11,13 @@
 #include <vector>
 #include "common.h"
 
+class Board;
+
 class Rook {
 public:
 	Rook();
 	virtual ~Rook();
-	static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+	static std::vector<movement> getMoves(movement & current, Board& board);
 };
 
 #endif /* ROOK_H_ */

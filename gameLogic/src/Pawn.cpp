@@ -6,6 +6,7 @@
  */
 
 #include "Pawn.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ Pawn::~Pawn() {
   // TODO Auto-generated destructor stub
 }
 
-void Pawn::takePiece(movement & move, char color, vector<vector<char> >& board, vector<movement> & possibleMoves){
+void Pawn::takePiece(movement & move, char color, Board& board, vector<movement> & possibleMoves){
     if(move.target_row >= 0 && move.target_row <= 7 &&
        move.target_column >= 0 && move.target_column <= 7) {
         if((color == 'w' && is_black(board[move.target_row][move.target_column])) ||
@@ -28,7 +29,7 @@ void Pawn::takePiece(movement & move, char color, vector<vector<char> >& board, 
     }
 }
 
-void Pawn::move(movement & move, char color, vector<vector<char> >& board, vector<movement> & possibleMoves){
+void Pawn::move(movement & move, char color, Board& board, vector<movement> & possibleMoves){
     if(move.target_row >= 0 && move.target_row <= 7 &&
        move.target_column >= 0 && move.target_column <= 7) {
         if(board[move.target_row][move.target_column] == '.' ){
@@ -37,7 +38,7 @@ void Pawn::move(movement & move, char color, vector<vector<char> >& board, vecto
     }
 }
 
-vector<movement> Pawn::getMoves(movement & current, vector<vector<char> >& board){
+vector<movement> Pawn::getMoves(movement & current, Board& board){
     // No en passant or promotion considered yet
     vector<movement> possibleMoves;
     char color = (board[current.origin_row][current.origin_column] == 'P')? 'w': 'b';

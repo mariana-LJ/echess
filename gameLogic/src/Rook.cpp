@@ -6,6 +6,7 @@
  */
 
 #include "Rook.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ Rook::~Rook() {
 	// TODO Auto-generated destructor stub
 }
 
-vector<movement> Rook::getMoves(movement & current, vector<vector<char> >& board){
+vector<movement> Rook::getMoves(movement & current, Board& board){
 	vector<movement> possibleMoves;
 	char color = is_white(board[current.origin_row][current.origin_column])? 'w': 'b';
 	char pieceName = board[current.origin_row][current.origin_column];

@@ -11,14 +11,16 @@
 #include <vector>
 #include "common.h"
 
+class Board;
+
 class King {
 public:
     King();
     virtual ~King();
-    static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+    static std::vector<movement> getMoves(movement & current, Board& board);
 private:
-    static bool isShortCastleAvailable(movement & current, std::vector<std::vector<char> >& board);
-    static bool isLongCastleAvailable(movement & current, std::vector<std::vector<char> >& board);
+    static bool isShortCastleAvailable(movement & current, Board& board);
+    static bool isLongCastleAvailable(movement & current, Board& board);
 };
 
 #endif /* KING_H_ */

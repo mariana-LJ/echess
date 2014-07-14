@@ -11,11 +11,13 @@
 #include <vector>
 #include "common.h"
 
+class Board;
+
 class Bishop {
 public:
 	Bishop();
 	virtual ~Bishop();
-	static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+	static std::vector<movement> getMoves(movement & current, Board& board);
 };
 
 #endif /* BISHOP_H_ */

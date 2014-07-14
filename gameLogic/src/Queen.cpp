@@ -8,6 +8,7 @@
 #include "Queen.h"
 #include "Rook.h"
 #include "Bishop.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ Queen::~Queen() {
     // TODO Auto-generated destructor stub
 }
 
-vector<movement> Queen::getMoves(movement & current, vector<vector<char> >& board){
+vector<movement> Queen::getMoves(movement & current, Board& board){
     vector<movement> possibleMoves;
     vector<movement> rowColMoves;
     char color = (board[current.origin_row][current.origin_column] == 'B')? 'w': 'b';

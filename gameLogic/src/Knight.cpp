@@ -6,6 +6,7 @@
  */
 
 #include "Knight.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ Knight::~Knight() {
 
 
 
-vector<movement> Knight::getMoves(movement & current, vector<vector<char> >& board){
+vector<movement> Knight::getMoves(movement & current, Board& board){
     vector<movement> possibleMoves;
     char color = (board[current.origin_row][current.origin_column] == 'N')? 'w': 'b';
     char pieceName = board[current.origin_row][current.origin_column];

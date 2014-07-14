@@ -13,11 +13,13 @@
 #include "Bishop.h"
 #include "Rook.h"
 
+class Board;
+
 class Queen {
 public:
     Queen();
     virtual ~Queen();
-    static std::vector<movement> getMoves(movement & current, std::vector<std::vector<char> >& board);
+    static std::vector<movement> getMoves(movement & current, Board& board);
 };
 
 
