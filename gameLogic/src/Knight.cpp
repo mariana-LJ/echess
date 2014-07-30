@@ -10,17 +10,6 @@
 
 using namespace std;
 
-Knight::Knight() {
-  // TODO Auto-generated constructor stub
-
-}
-
-Knight::~Knight() {
-  // TODO Auto-generated destructor stub
-}
-
-
-
 vector<movement> Knight::getMoves(movement & current, Board& board){
     vector<movement> possibleMoves;
     char color = (board[current.origin_row][current.origin_column] == 'N')? 'w': 'b';

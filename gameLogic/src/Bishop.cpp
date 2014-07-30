@@ -10,15 +10,6 @@
 
 using namespace std;
 
-Bishop::Bishop() {
-	// TODO Auto-generated constructor stub
-
-}
-
-Bishop::~Bishop() {
-	// TODO Auto-generated destructor stub
-}
-
 vector<movement> Bishop::getMoves(movement & current, Board& board){
 	vector<movement> possibleMoves;
 	char color = is_white(board[current.origin_row][current.origin_column])? 'w': 'b';

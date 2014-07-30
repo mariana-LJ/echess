@@ -22,11 +22,17 @@ struct movement {
   movement() {
     origin_row = -1;
     origin_column = -1;
+    target_row = -1;
+    target_column = -1;
+    piece = '.';
   }
 
   movement(int origin_row, int origin_column) {
     this->origin_row = origin_row;
     this->origin_column = origin_column;
+    target_row = -1;
+    target_column = -1;
+    piece = '.';
   }
 
 };

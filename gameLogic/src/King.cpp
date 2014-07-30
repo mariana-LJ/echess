@@ -12,15 +12,6 @@
 
 using namespace std;
 
-King::King() {
-    // TODO Auto-generated constructor stub
-
-}
-
-King::~King() {
-    // TODO Auto-generated destructor stub
-}
-
 bool King::isShortCastleAvailable(movement & current, Board& board){
     if(current.origin_row == 0){
         return(board.whiteShortCastleAvailable() &&

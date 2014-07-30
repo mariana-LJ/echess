@@ -74,6 +74,62 @@ void Board::initializeBoard(){
     }
 }
 
+// Verifies that the king of the opposite color was not left
+// in check in the last movement
+bool Board::wasKingLeftInCheck(){
+    vector<movement> movements;
+
+    for(int row = 0; row < rows_; ++row){
+        for(int col = 0; col < columns_; ++col){
+            movements = getMoves(row, col);
+
+            for(vector<movement>::const_iterator p = movements.begin();
+                p != movements.end(); ++p){
+                if((board_[p->target_row][p->target_column] == 'K') ||
+                   (board_[p->target_row][p->target_column] == 'k')){
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Board::isSameBoard(unsigned char (&shadowBoard)[8][8]){
+
+    for(int row = 0; row < rows_; ++row){
+        for(int col = 0; col < columns_; ++col){
+            if((shadowBoard[row][col] == 0 && board_[row][col] != '.') ||
+               (shadowBoard[row][col] == 1 && board_[row][col] == '.')){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+movement Board::findMove(unsigned char (&shadowBoard)[8][8]){
+    vector<movement> moves;
+
+    for(int row = 0; row < rows_; ++row){
+        for(int col = 0; col < columns_; ++col){
+            moves = getMoves(row, col);
+            for(vector<movement>::const_iterator p = moves.begin();
+                p != moves.end(); ++p){
+                Board clonBoard(*this);
+                clonBoard.move(*p);
+                if(!clonBoard.wasKingLeftInCheck() && clonBoard.isSameBoard(shadowBoard)){
+                    return *p;
+                }
+            }
+        }
+    }
+
+    movement emptyMove;
+    return emptyMove;
+}
 
 vector<char> & Board::operator[](size_t index) {
   return board_[index];
@@ -94,34 +150,34 @@ vector<movement> Board::getMoves(int row, int column){
     vector<movement> result;
     movement origin(row, column);
 
-    switch(board_[origin.origin_row][origin.origin_column]){
-        case ('P'):
-        case('p'):
-              result = Pawn::getMoves(origin, *this);
-          break;
-        case ('N'):
-        case('n'):
-            result = Knight::getMoves(origin, *this);
-          break;
-        case('B'):
-        case('b'):
-          result = Bishop::getMoves(origin, *this);
-          break;
-        case('R'):
-        case('r'):
-          result = Rook::getMoves(origin, *this);
-          break;
-        case('Q'):
-        case('q'):
-          result = Queen::getMoves(origin, *this);
-          break;
-        case('K'):
-        case('k'):
-          result = King::getMoves(origin, *this);
-          break;
-        default:
-            printf("Invalid move.\n");
-          break;
+    if((whiteToMove_ && is_white(board_[origin.origin_row][origin.origin_column])) ||
+       (!whiteToMove_ && is_black(board_[origin.origin_row][origin.origin_column]))){
+        switch(board_[origin.origin_row][origin.origin_column]){
+            case ('P'):
+            case('p'):
+                  result = Pawn::getMoves(origin, *this);
+              break;
+            case ('N'):
+            case('n'):
+                result = Knight::getMoves(origin, *this);
+              break;
+            case('B'):
+            case('b'):
+              result = Bishop::getMoves(origin, *this);
+              break;
+            case('R'):
+            case('r'):
+              result = Rook::getMoves(origin, *this);
+              break;
+            case('Q'):
+            case('q'):
+              result = Queen::getMoves(origin, *this);
+              break;
+            case('K'):
+            case('k'):
+              result = King::getMoves(origin, *this);
+              break;
+        }
     }
 
     return result;
@@ -143,10 +199,20 @@ void Board::move(movement move) {
         }
     }
 
-    // TODO pre-en passant movement
+    // pre-en passant movement
+    if(board_[move.origin_row][move.origin_column] == 'P' ||
+       board_[move.origin_row][move.origin_column] == 'p'){
+        if(move.target_row == enPassantRowCapture_ &&
+           move.target_column == enPassantColumn_){
+            board_[enPassantRow_][enPassantColumn_] = '.';
+        }
+    }
 
     board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
     board_[move.origin_row][move.origin_column] = '.';
+
+    // update turn
+    whiteToMove_ = !whiteToMove_;
 
     // update castle availability
     if(board_[move.target_row][move.target_column] == 'K') {
@@ -174,8 +240,15 @@ void Board::move(movement move) {
         }
     }
 
-    // TODO update en passant
-
+    // Update en passant
+    if((board_[move.target_row][move.target_column] != 'P' &&
+       board_[move.target_row][move.target_column] != 'p') ||
+       (move.target_row != enPassantRow_ &&
+       move.target_column != enPassantColumn_)){
+        enPassantRow_ = -1;
+        enPassantColumn_ = -1;
+        enPassantRowCapture_ = -1;
+    }
 }
 
 /*int main(void){

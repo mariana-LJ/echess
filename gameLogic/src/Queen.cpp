@@ -12,20 +12,9 @@
 
 using namespace std;
 
-Queen::Queen() {
-    // TODO Auto-generated constructor stub
-
-}
-
-Queen::~Queen() {
-    // TODO Auto-generated destructor stub
-}
-
 vector<movement> Queen::getMoves(movement & current, Board& board){
     vector<movement> possibleMoves;
     vector<movement> rowColMoves;
-    char color = (board[current.origin_row][current.origin_column] == 'B')? 'w': 'b';
-    char pieceName = board[current.origin_row][current.origin_column];
 
     possibleMoves = Bishop::getMoves(current, board);
     rowColMoves = Rook::getMoves(current, board);
