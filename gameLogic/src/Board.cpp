@@ -110,7 +110,7 @@ bool Board::isSameBoard(unsigned char (&shadowBoard)[8][8]){
     return true;
 }
 
-movement Board::findMove(unsigned char (&shadowBoard)[8][8]){
+movement Board::findMovement(unsigned char (&shadowBoard)[8][8]){
     vector<movement> moves;
 
     for(int row = 0; row < rows_; ++row){

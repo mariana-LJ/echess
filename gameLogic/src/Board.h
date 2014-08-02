@@ -29,7 +29,8 @@ public:
     int getEnPassantColumn(){return enPassantColumn_; }
     int getEnPassantRow(){return enPassantRow_; }
     int getEnPassantRowCapture(){return enPassantRowCapture_; }
-    movement findMove(unsigned char (&shadowBoard)[8][8]);
+    bool wasKingLeftInCheck();
+    movement findMovement(unsigned char (&shadowBoard)[8][8]);
 
 private:
     int rows_;
@@ -45,7 +46,6 @@ private:
     int enPassantRowCapture_;
 
     void initializeBoard();
-    bool wasKingLeftInCheck();
     bool isSameBoard(unsigned char (&shadowBoard)[8][8]);
 };
 

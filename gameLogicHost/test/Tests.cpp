@@ -537,7 +537,172 @@ TEST(EnPassant, Test1){
     ASSERT_NE(findMove(moves, 2, 5), moves.end());
     b.move(*findMove(moves, 2, 5));
 
-    b.printBoard();
-
 }
 
+// Testing the validation of moves
+TEST(moveValid, Test1){
+    Board b;
+    unsigned char shadows[8][8] = {{1,1,1,1,1,1,1,1},
+                                   {1,1,1,0,1,1,1,1},
+                                   {0,0,0,1,0,0,0,0},
+                                   {0,0,0,0,0,0,0,0},
+                                   {0,0,0,0,0,0,0,0},
+                                   {0,0,0,0,0,0,0,0},
+                                   {1,1,1,1,1,1,1,1},
+                                   {1,1,1,1,1,1,1,1}};
+
+    // 1. White pawn from (1,3) to (2,3)
+    vector<movement> moves = b.getMoves(1,3);
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'P');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 1);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 2);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 3);
+    b.move(b.findMovement(shadows));
+
+    // 2. Black pawn from (6,3) to (4,3)
+    shadows[6][3] = 0;
+    shadows[4][3] = 1;
+    moves = b.getMoves(6,3);
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'p');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 6);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 4);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 3);
+    b.move(b.findMovement(shadows));
+
+    // 3. White knight from (0,6) to (2,5)
+    shadows[0][6] = 0;
+    shadows[2][5] = 1;
+    moves = b.getMoves(0,6); //
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'N');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 0);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 6);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 2);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 5);
+    b.move(b.findMovement(shadows));
+
+    // 4. Black knight from (7,1) to (5,2)
+    shadows[7][1] = 0;
+    shadows[5][2] = 1;
+    moves = b.getMoves(7,1); //
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'n');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 7);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 1);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 5);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 2);
+    b.move(b.findMovement(shadows));
+
+    // 5. White pawn from (1,4) to (3,4)
+    shadows[1][4] = 0;
+    shadows[3][4] = 1;
+    moves = b.getMoves(1,4); //
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'P');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 1);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 4);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 4);
+    b.move(b.findMovement(shadows));
+
+    // 6. Black pawn from (4,3) to (3,4) takes white pawn
+    shadows[4][3] = 0;
+    moves = b.getMoves(4,3); //
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'p');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 4);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 4);
+    b.move(b.findMovement(shadows));
+
+    // 7. White pawn from (2,3) to (3,4) takes black pawn
+    shadows[2][3] = 0;
+    moves = b.getMoves(2,3); //
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'P');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 2);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 4);
+    b.move(b.findMovement(shadows));
+
+    // 8. Black bishop from (7,2) to (3,6)
+    shadows[7][2] = 0;
+    shadows[3][6] = 1;
+    moves = b.getMoves(7,2); //
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'b');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 7);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 2);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 3);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 6);
+    b.move(b.findMovement(shadows));
+
+    // 9. White bishop from (0,5) to (1,4)
+    shadows[0][5] = 0;
+    shadows[1][4] = 1;
+    moves = b.getMoves(0,5); //
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'B');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 0);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 5);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 1);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 4);
+    b.move(b.findMovement(shadows));
+
+    // 10. Black knight from (5,2) to (4,4)
+    shadows[5][2] = 0;
+    shadows[4][4] = 1;
+    moves = b.getMoves(5,2); //
+    ASSERT_EQ(moves.size(), 5);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'n');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 5);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 2);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 4);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 4);
+    b.move(b.findMovement(shadows));
+
+    // 11. White short castle
+    shadows[0][4] = 0;
+    shadows[0][6] = 1;
+    shadows[0][7] = 0;
+    shadows[0][5] = 1;
+    moves = b.getMoves(0,4); //
+    ASSERT_EQ(moves.size(), 3);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'K');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 0);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 4);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 0);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 6);
+    b.move(b.findMovement(shadows));
+
+    // 12. Black knight from (4,4) to (2,5) takes white knight: Check!
+    shadows[4][4] = 0;
+    moves = b.getMoves(4,4); //
+    ASSERT_EQ(moves.size(), 6);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'n');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 4);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 4);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 2);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 5);
+    b.move(b.findMovement(shadows));
+    b.printBoard();
+    ASSERT_TRUE(b.wasKingLeftInCheck());
+
+    // 13. White pawn from (1,6) to (2,5) takes black knight
+    shadows[1][6] = 0;
+    moves = b.getMoves(1,6); //
+    ASSERT_EQ(moves.size(), 2);
+    ASSERT_EQ(b.findMovement(shadows).piece, 'P');
+    ASSERT_EQ(b.findMovement(shadows).origin_row, 1);
+    ASSERT_EQ(b.findMovement(shadows).origin_column, 6);
+    ASSERT_EQ(b.findMovement(shadows).target_row, 2);
+    ASSERT_EQ(b.findMovement(shadows).target_column, 5);
+    b.move(b.findMovement(shadows));
+    ASSERT_FALSE(b.wasKingLeftInCheck());
+}
