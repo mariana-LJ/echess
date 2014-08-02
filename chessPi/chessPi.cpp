@@ -68,40 +68,8 @@ private:
 };
 
 
-void Test_A2D()
-{
-	int i = 0;								// Auxiliary variables
-	int b = 0;
-	struct timespec tim, tim2;				// Nanosleep function setup (0 seconds and 500ms)
-	tim.tv_sec = 0;
-	tim.tv_nsec = 500000000L;
-	string filename = "/dev/i2c-1";
-
-	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
-	A2D_Converter a2d_2(filename.c_str(), 0x49);
-	a2d_1.Initialize();
-	a2d_2.Initialize();
-
-	for(i = 0; i<100; i++) {// The result: 8 converted values in a row read 100 times and separated by a new line
-		a2d_1.Read();
-		a2d_2.Read();
-
-		for(b = 0; b<4; b++){
-			printf("%x ", a2d_1.Get(b));
-		}
-		for(b = 0; b<4; b++){
-			printf("%x ", a2d_2.Get(b));
-		}
-		printf("\n");
-
-		if(nanosleep(&tim , &tim2) < 0 ){
-			  printf("Nano sleep system call failed \n");
-		}
-	}
-}
-
 class Gpio_Expander{
-private:
+protected:
 	int fileDescr_;							// File description
 	const char *fileName_;	// Name of the port we will be using (1 for Rev. 2, 0-Rev.1)
 	byte  mcp_address_;      		// I2C Address of MCP23017 Chip
@@ -189,30 +157,45 @@ public:
 };
 
 
-void Test_Gpio_Expander() {
+class Gpio_Buttons: public Gpio_Expander {
+private:
+    byte state_[16];
+    byte debouncing_[16];
+public:
+    Gpio_Buttons(const char *fileName, byte mcp_address):
+        Gpio_Expander(fileName, mcp_address){
+        Configure_PortA(0xFF);  //Configure port A pins as inputs
+        memset(state_, 0, 16);
+        memset(debouncing_, 0, 16);
+    }
 
-	int i = 0;
-	string filename = "/dev/i2c-1";
-	struct timespec tim, tim2;				// Nanosleep function setup (1 second and 0ms)
-	tim.tv_sec = 1;
-	tim.tv_nsec = 0;
+    void Update(){
+        byte readings = Get_PortA();
 
-	Gpio_Expander gpio1(filename.c_str(), 0x20);	//To instantiate a GPIO object (first GPIO chip)
-	gpio1.Initialize();
-	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
+        for(int b = 0; b < 8; ++b){
+            debouncing_[b] <<= 1;
+            debouncing_[b] |= (readings & 0x01);
+            readings >>= 1;
+        }
 
-	for(i = 0; i < 8; i++){ // Test three outputs from one GPIO (turn on and off 3 LEDs sequentially)
-		gpio1.Set_PortB(i);
-		if(nanosleep(&tim , &tim2) < 0 ){
-			printf("Nano sleep system call failed \n");
-		}
-	}
-	gpio1.Set_PortB(0x00);	// Set GPIOB0-7 low
-	gpio1.Configure_PortB(0xFF); // Leave GPIOB0-7 as inputs
 
-}
+        for(int b = 0; b < 16; ++b){
+            if(debouncing_[b] == 0xFF){
+                state_[b] = 1;
+            }
+            else if(debouncing_[b] == 0x00){
+                state_[b] = 0;
+            }
+        }
+    }
 
-void Test_MUX(){
+    byte getButtonState(int button){
+        return state_[button];
+    }
+};
+
+
+void ChessPi(){
 	struct timespec tim, tim2;				// Nanosleep function setup (0 seconds and 10ms)
 	tim.tv_sec = 0;
 	tim.tv_nsec = 10000000L;
@@ -222,6 +205,7 @@ void Test_MUX(){
 	byte button;
 	bool pushed = false;
 	Board b;
+	movement m;
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -231,54 +215,45 @@ void Test_MUX(){
 	Gpio_Expander gpio1(filename.c_str(), 0x20);	//To instantiate a GPIO object (first GPIO chip)
 	gpio1.Initialize();
 	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
-	gpio1.Configure_PortA(0xFF);	//Configure port A pins as inputs
 
+	Gpio_Buttons gpioButtons(filename.c_str(), 0x20);
+	gpioButtons.Initialize();
+
+	system("clear");
     while(true){
-        button = gpio1.Get_PortA();
+        if(nanosleep(&tim , &tim2) < 0 ){
+            printf("Nano sleep system call failed \n");
+        }
+        gpioButtons.Update();
+        button = gpioButtons.getButtonState(0);
         if(!pushed && button){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
-                /*if(nanosleep(&tim , &tim2) < 0 ){
-                    printf("Nano sleep system call failed \n");
-                }*/
                 a2d_1.Read();
                 a2d_2.Read();
-                board[mux_channel][0] = a2d_1.Get(0);
-                board[mux_channel][1] = a2d_1.Get(1);
-                board[mux_channel][2] = a2d_1.Get(2);
-                board[mux_channel][3] = a2d_1.Get(3);
-                board[mux_channel][4] = a2d_2.Get(0);
-                board[mux_channel][5] = a2d_2.Get(1);
-                board[mux_channel][6] = a2d_2.Get(2);
-                board[mux_channel][7] = a2d_2.Get(3);
+                board[mux_channel][0] = a2d_1.Get(0) < 0x25 ? 1 : 0;
+                board[mux_channel][1] = a2d_1.Get(1) < 0x25 ? 1 : 0;
+                board[mux_channel][2] = a2d_1.Get(2) < 0x25 ? 1 : 0;
+                board[mux_channel][3] = a2d_1.Get(3) < 0x25 ? 1 : 0;
+                board[mux_channel][4] = a2d_2.Get(0) < 0x25 ? 1 : 0;
+                board[mux_channel][5] = a2d_2.Get(1) < 0x25 ? 1 : 0;
+                board[mux_channel][6] = a2d_2.Get(2) < 0x25 ? 1 : 0;
+                board[mux_channel][7] = a2d_2.Get(3) < 0x25 ? 1 : 0;
             }
 
-            system("clear");
-            for(int row = 0; row < 8; row++){
-                for(int col = 0; col < 8; col++){
-                    printf("%x\t", board[row][col]);
-                }
-                printf("\n");
+            m = b.findMovement(board);
+            printf("%c (%d, %d) (%d, %d)\n", m.piece, m.origin_row,
+                   m.origin_column, m.target_row, m.target_column);
+            if(m.origin_row != -1 && m.origin_column != -1 &&
+               m.target_row != -1 && m.target_column != -1){
+                b.move(m);
             }
-            printf("\n");
-
-            for(int row = 7; row > -1; row--){
-                for(int col = 0; col < 8; col++){
-                    if(board[row][col] < 0x25){
-                        printf("x\t");
-                    }else{
-                        printf("o\t");
-                    }
-                }
-                printf("\n");
-            }
-            printf("\n");
         }
         pushed = button;
     }
 }
 
 int main(int argc, char **argv){
-	Test_MUX();
+	ChessPi();
 	return 0;
 }

@@ -211,9 +211,6 @@ void Board::move(movement move) {
     board_[move.target_row][move.target_column] = board_[move.origin_row][move.origin_column];
     board_[move.origin_row][move.origin_column] = '.';
 
-    // update turn
-    whiteToMove_ = !whiteToMove_;
-
     // update castle availability
     if(board_[move.target_row][move.target_column] == 'K') {
         whiteShortCastleAvailable_ = false;
@@ -241,14 +238,26 @@ void Board::move(movement move) {
     }
 
     // Update en passant
-    if((board_[move.target_row][move.target_column] != 'P' &&
-       board_[move.target_row][move.target_column] != 'p') ||
-       (move.target_row != enPassantRow_ &&
-       move.target_column != enPassantColumn_)){
+    if((board_[move.target_row][move.target_column] == 'P' ||
+        board_[move.target_row][move.target_column] == 'p') &&
+       abs(move.target_row - move.origin_row) == 2){
+        enPassantColumn_ = move.target_column;
+        enPassantRow_ = move.target_row;
+        if(whiteToMove_){
+            enPassantRowCapture_ = move.target_row - 1;
+        }
+        else{
+            enPassantRowCapture_ = move.target_row + 1;
+        }
+    }
+    else {
         enPassantRow_ = -1;
         enPassantColumn_ = -1;
         enPassantRowCapture_ = -1;
     }
+
+    // update turn
+    whiteToMove_ = !whiteToMove_;
 }
 
 /*int main(void){

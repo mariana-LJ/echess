@@ -48,9 +48,6 @@ vector<movement> Pawn::getMoves(movement & current, Board& board){
         move(newMove, color, board, possibleMoves);
         if(current.origin_row == 1){ // the first move for a white pawn
           newMove.target_row = current.origin_row + 2; // check two squares ahead
-          board.setEnPassantRow(newMove.target_row); // set possible en-passant
-          board.setEnPassantColumn(newMove.target_column);
-          board.setEnPassantRowCapture(newMove.target_row - 1);
           move(newMove, color, board, possibleMoves);
         }
 
@@ -72,9 +69,6 @@ vector<movement> Pawn::getMoves(movement & current, Board& board){
         move(newMove, color, board, possibleMoves);
         if(current.origin_row == 6){ // the first move for a black pawn
           newMove.target_row = current.origin_row - 2; // check two squares ahead
-          board.setEnPassantRow(newMove.target_row); // set possible en-passant
-          board.setEnPassantColumn(newMove.target_column);
-          board.setEnPassantRowCapture(newMove.target_row + 1);
           move(newMove, color, board, possibleMoves);
         }
 
