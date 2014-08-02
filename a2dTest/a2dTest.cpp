@@ -16,6 +16,8 @@
 #include <iostream>
 #include <string>
 
+#include "Board.h"
+
 typedef unsigned char byte;
 using namespace std;
 
@@ -218,6 +220,8 @@ void Test_MUX(){
 	const int MUX_CHANNELS = 8;
 	byte board[8][8];
 	byte button;
+	bool pushed = false;
+	Board b;
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -229,54 +233,49 @@ void Test_MUX(){
 	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
 	gpio1.Configure_PortA(0xFF);	//Configure port A pins as inputs
 
-	for(int readings = 0; readings < 60; readings++){
+    while(true){
+        button = gpio1.Get_PortA();
+        if(!pushed && button){
+            for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
+                gpio1.Set_PortB(1<<mux_channel);
+                /*if(nanosleep(&tim , &tim2) < 0 ){
+                    printf("Nano sleep system call failed \n");
+                }*/
+                a2d_1.Read();
+                a2d_2.Read();
+                board[mux_channel][0] = a2d_1.Get(0);
+                board[mux_channel][1] = a2d_1.Get(1);
+                board[mux_channel][2] = a2d_1.Get(2);
+                board[mux_channel][3] = a2d_1.Get(3);
+                board[mux_channel][4] = a2d_2.Get(0);
+                board[mux_channel][5] = a2d_2.Get(1);
+                board[mux_channel][6] = a2d_2.Get(2);
+                board[mux_channel][7] = a2d_2.Get(3);
+            }
 
-		for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
-			gpio1.Set_PortB(1<<mux_channel);
-			/*if(nanosleep(&tim , &tim2) < 0 ){
-				printf("Nano sleep system call failed \n");
-			}*/
-			a2d_1.Read();
-			a2d_2.Read();
-			board[mux_channel][0] = a2d_1.Get(0);
-			board[mux_channel][1] = a2d_1.Get(1);
-			board[mux_channel][2] = a2d_1.Get(2);
-			board[mux_channel][3] = a2d_1.Get(3);
-			board[mux_channel][4] = a2d_2.Get(0);
-			board[mux_channel][5] = a2d_2.Get(1);
-			board[mux_channel][6] = a2d_2.Get(2);
-			board[mux_channel][7] = a2d_2.Get(3);
-		}
+            system("clear");
+            for(int row = 0; row < 8; row++){
+                for(int col = 0; col < 8; col++){
+                    printf("%x\t", board[row][col]);
+                }
+                printf("\n");
+            }
+            printf("\n");
 
-		system("clear");
-		for(int row = 0; row < 8; row++){
-			for(int col = 0; col < 8; col++){
-				printf("%x\t", board[row][col]);
-			}
-			printf("\n");
-		}
-		printf("\n");
-
-		for(int row = 7; row > -1; row--){
-			for(int col = 0; col < 8; col++){
-				if(board[row][col] < 0x25){
-					printf("x\t");
-				}else{
-					printf("o\t");
-				}
-			}
-			printf("\n");
-		}
-		printf("\n");
-
-		button = gpio1.Get_PortA();
-
-		printf("Button: %d\n", button & 0x01);
-
-		sleep(1);
-
-	}
-
+            for(int row = 7; row > -1; row--){
+                for(int col = 0; col < 8; col++){
+                    if(board[row][col] < 0x25){
+                        printf("x\t");
+                    }else{
+                        printf("o\t");
+                    }
+                }
+                printf("\n");
+            }
+            printf("\n");
+        }
+        pushed = button;
+    }
 }
 
 int main(int argc, char **argv){

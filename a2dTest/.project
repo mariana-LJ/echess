@@ -24,4 +24,17 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>IMPORTED_SRC</name>
+			<type>2</type>
+			<locationURI>IMPORTED_SRC</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>IMPORTED_SRC</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/gameLogic/src</value>
+		</variable>
+	</variableList>
 </projectDescription>
