@@ -23,9 +23,6 @@ public:
     bool whiteLongCastleAvailable() { return whiteLongCastleAvailable_; }
     bool blackShortCastleAvailable() { return blackShortCastleAvailable_; }
     bool blackLongCastleAvailable() { return blackLongCastleAvailable_; }
-    void setEnPassantColumn(int c){ enPassantColumn_ = c; }
-    void setEnPassantRow(int r){ enPassantRow_ = r;}
-    void setEnPassantRowCapture(int rc){ enPassantRowCapture_ = rc; }
     int getEnPassantColumn(){return enPassantColumn_; }
     int getEnPassantRow(){return enPassantRow_; }
     int getEnPassantRowCapture(){return enPassantRowCapture_; }
