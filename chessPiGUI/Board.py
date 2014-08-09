@@ -1,18 +1,17 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-from Tkinter import Tk, Canvas, Frame, BOTH
+from Tkinter import Tk, Canvas, Frame, Label, BOTH, PhotoImage
 
 class Board(Frame):
 
 	def __init__(self, parent):
 		Frame.__init__(self, parent)
-
 		self.parent = parent
+		self.boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
 		self.initUI()
 
 	def initUI(self):
-		
 		self.parent.title("Board")
 		self.pack(fill=BOTH, expand=1)
 		self.centerWindow()
@@ -20,13 +19,11 @@ class Board(Frame):
 		
 
 	def centerWindow(self):
-		
 		boardWidth = 520
 		boardHeight = 520
 
 		screenWidth = self.parent.winfo_screenwidth()
 		screnHeight = self.parent.winfo_screenheight()
-
 		centerWidth = (screenWidth)/2
 		centerHeight =(screnHeight)/2
 
@@ -34,7 +31,6 @@ class Board(Frame):
 											  centerWidth, centerHeight))
 
 	def drawBoard(self):
-		
 		isWhite = True
 		squareWidth = 60
 		squareHeight = 60
@@ -46,14 +42,15 @@ class Board(Frame):
 		interior = "#fff"
 		
 		canvas = Canvas(self)
+
 		for row in range(8):
 			for col in range(8):
 				if(isWhite):
 					border = "#fff"
 					interior = "#fff"
 				else:
-					border = "#000"
-					interior = "#000"
+					border = "#700"
+					interior = "#700"
 				canvas.create_rectangle((topX + (squareWidth*col)),
 										(topY + (squareHeight*row)),
 										(bottomX + (squareWidth*col)),
@@ -61,6 +58,9 @@ class Board(Frame):
 									    outline=border, fill=interior)
 				isWhite = not isWhite
 			isWhite = not isWhite
+
+		self.bPawn = PhotoImage(file='01_imgs/p.gif')
+		canvas.create_image(110,50, image=self.bPawn)
 
 		canvas.pack(fill=BOTH, expand=1)	
 		
