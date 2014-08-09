@@ -206,6 +206,7 @@ void ChessPi(){
 	bool pushed = false;
 	Board b;
 	movement m;
+	string boardString;
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -219,7 +220,7 @@ void ChessPi(){
 	Gpio_Buttons gpioButtons(filename.c_str(), 0x20);
 	gpioButtons.Initialize();
 
-	system("clear");
+	//system("clear");
     while(true){
         if(nanosleep(&tim , &tim2) < 0 ){
             printf("Nano sleep system call failed \n");
@@ -242,12 +243,13 @@ void ChessPi(){
             }
 
             m = b.findMovement(board);
-            printf("%c (%d, %d) (%d, %d)\n", m.piece, m.origin_row,
-                   m.origin_column, m.target_row, m.target_column);
+            /*printf("%c (%d, %d) (%d, %d)\n", m.piece, m.origin_row,
+                   m.origin_column, m.target_row, m.target_column);*/
             if(m.origin_row != -1 && m.origin_column != -1 &&
                m.target_row != -1 && m.target_column != -1){
                 b.move(m);
             }
+            b.printBoard();
         }
         pushed = button;
     }

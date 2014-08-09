@@ -139,12 +139,12 @@ vector<char> & Board::operator[](size_t index) {
 void Board::printBoard(){
     for(int row = rows_- 1; row >= 0; --row){
         for(int col = 0; col < columns_; col++){
-            cout << board_[row][col] << '\t';
+            cout << board_[row][col];
         }
-        cout << endl;
     }
     cout << endl;
 }
+
 
 vector<movement> Board::getMoves(int row, int column){
     vector<movement> result;

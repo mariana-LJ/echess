@@ -2,25 +2,47 @@
 # -*- coding: utf-8 -*-
 
 from Tkinter import Tk, Canvas, Frame, Label, BOTH, PhotoImage
+from time import sleep
+from threading import Thread
+import subprocess
+
+def ChessUpdate(board):
+	engine = subprocess.Popen(
+		'./chessPi',
+		stdout=subprocess.PIPE)
+	while True:
+		boardString = engine.stdout.readline()
+                boardString = boardString.strip()
+		print boardString
+		if len(boardString) == 64:
+			board.drawBoard(boardString)
 
 class Board(Frame):
 
 	def __init__(self, parent):
 		Frame.__init__(self, parent)
 		self.parent = parent
-		self.boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
 		self.initUI()
 
 	def initUI(self):
 		self.parent.title("Board")
 		self.pack(fill=BOTH, expand=1)
 		self.centerWindow()
-		self.drawBoard()
+
+		pieceNames = "rnbqkpPRNBQK"
+		self.pieces = {}
+		for pieceName in pieceNames:
+			self.pieces[pieceName] = PhotoImage(file='01_imgs/' + pieceName +'.gif')
+		
+		self.canvas = Canvas(self)
+		self.canvas.pack(fill=BOTH, expand=1)
+		boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
+		self.drawBoard(boardString)
 		
 
 	def centerWindow(self):
-		boardWidth = 520
-		boardHeight = 520
+		boardWidth = 208
+		boardHeight = 208
 
 		screenWidth = self.parent.winfo_screenwidth()
 		screnHeight = self.parent.winfo_screenheight()
@@ -30,46 +52,45 @@ class Board(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (boardWidth, boardHeight, 
 											  centerWidth, centerHeight))
 
-	def drawBoard(self):
+	def drawBoard(self, boardString):
 		isWhite = True
-		squareWidth = 60
-		squareHeight = 60
-		topX = 20
-		topY = 20
-		bottomX = 80
-		bottomY = 80
+		squareWidth = 26
+		squareHeight = 26
+		topX = 0
+		topY = 0
+		bottomX = 26
+		bottomY = 26
 		border = "#fff"
 		interior = "#fff"
-		
-		canvas = Canvas(self)
+		self.canvas.delete("all")
 
 		for row in range(8):
 			for col in range(8):
 				if(isWhite):
-					border = "#fff"
-					interior = "#fff"
+					border = "#fc9"
+					interior = "#fc9"
 				else:
-					border = "#700"
-					interior = "#700"
-				canvas.create_rectangle((topX + (squareWidth*col)),
+					border = "#931"
+					interior = "#931"
+				self.canvas.create_rectangle((topX + (squareWidth*col)),
 										(topY + (squareHeight*row)),
 										(bottomX + (squareWidth*col)),
 										(bottomY + (squareHeight*row)),
 									    outline=border, fill=interior)
+				pieceName = boardString[row*8 + col]
+				if pieceName != '.':
+					self.canvas.create_image(13 + 26*col, 13 + 26*row, image=self.pieces[pieceName])
 				isWhite = not isWhite
 			isWhite = not isWhite
-
-		self.bPawn = PhotoImage(file='01_imgs/p.gif')
-		canvas.create_image(110,50, image=self.bPawn)
-
-		canvas.pack(fill=BOTH, expand=1)	
 		
 
 def main():
-		
 	root= Tk()
-	b = Board(root)
+	board = Board(root)
+	chessUpdate = Thread(target = ChessUpdate, args = (board,))
+	chessUpdate.start()
 	root.mainloop()
+	
 
 
 if __name__ == '__main__':
