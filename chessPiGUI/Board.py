@@ -12,10 +12,12 @@ def ChessUpdate(board):
 		stdout=subprocess.PIPE)
 	while True:
 		boardString = engine.stdout.readline()
-                boardString = boardString.strip()
+		boardString = boardString.strip()
 		print boardString
 		if len(boardString) == 64:
 			board.drawBoard(boardString)
+		elif boardString == "exit":
+			break
 
 class Board(Frame):
 
