@@ -15,7 +15,10 @@ def ChessUpdate(board):
 		boardString = boardString.strip()
 		print boardString
 		if len(boardString) == 64:
-			board.drawBoard(boardString)
+			shadowString = engine.stdout.readline()
+			shadowString = shadowString.strip()
+			print shadowString
+			board.drawBoard(boardString, shadowString)
 		elif boardString == "exit":
 			break
 
@@ -39,7 +42,8 @@ class Board(Frame):
 		self.canvas = Canvas(self)
 		self.canvas.pack(fill=BOTH, expand=1)
 		boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
-		self.drawBoard(boardString)
+		shadowString= "1111111111111111000000000000000000000000000000001111111111111111"
+		self.drawBoard(boardString, shadowString)
 		
 
 	def centerWindow(self):
@@ -54,7 +58,7 @@ class Board(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (boardWidth, boardHeight, 
 											  centerWidth, centerHeight))
 
-	def drawBoard(self, boardString):
+	def drawBoard(self, boardString, shadowString):
 		isWhite = True
 		squareWidth = 26
 		squareHeight = 26
@@ -74,15 +78,20 @@ class Board(Frame):
 				else:
 					border = "#931"
 					interior = "#931"
+				pieceName = boardString[row*8 + col]
+				shadow = shadowString[row*8 + col]
+				if pieceName == '.' and shadow == '1' or pieceName != '.' and shadow == '0':
+					border = "#f00"
+					interior = "#f00"
 				self.canvas.create_rectangle((topX + (squareWidth*col)),
 										(topY + (squareHeight*row)),
 										(bottomX + (squareWidth*col)),
 										(bottomY + (squareHeight*row)),
 									    outline=border, fill=interior)
-				pieceName = boardString[row*8 + col]
 				if pieceName != '.':
 					self.canvas.create_image(13 + 26*col, 13 + 26*row, image=self.pieces[pieceName])
 				isWhite = not isWhite
+					
 			isWhite = not isWhite
 		
 
