@@ -551,6 +551,8 @@ TEST(moveValid, Test1){
                                    {1,1,1,1,1,1,1,1},
                                    {1,1,1,1,1,1,1,1}};
 
+    ASSERT_STREQ("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", b.FEN().c_str());
+
     // 1. White pawn from (1,3) to (2,3)
     vector<movement> moves = b.getMoves(1,3);
     ASSERT_EQ(moves.size(), 2);
@@ -560,6 +562,7 @@ TEST(moveValid, Test1){
     ASSERT_EQ(b.findMovement(shadows).target_row, 2);
     ASSERT_EQ(b.findMovement(shadows).target_column, 3);
     b.move(b.findMovement(shadows));
+    ASSERT_STREQ("rnbqkbnr/pppppppp/8/8/8/3P4/PPP1PPPP/RNBQKBNR b KQkq - 0 1", b.FEN().c_str());
 
     // 2. Black pawn from (6,3) to (4,3)
     shadows[6][3] = 0;
@@ -572,6 +575,7 @@ TEST(moveValid, Test1){
     ASSERT_EQ(b.findMovement(shadows).target_row, 4);
     ASSERT_EQ(b.findMovement(shadows).target_column, 3);
     b.move(b.findMovement(shadows));
+    ASSERT_STREQ("rnbqkbnr/ppp1pppp/8/3p4/8/3P4/PPP1PPPP/RNBQKBNR w KQkq d6 0 2", b.FEN().c_str());
 
     // 3. White knight from (0,6) to (2,5)
     shadows[0][6] = 0;

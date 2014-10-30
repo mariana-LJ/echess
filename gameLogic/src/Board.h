@@ -9,6 +9,7 @@
 #define BOARD_H_
 
 #include <vector>
+#include <string>
 #include "common.h"
 
 class Board{
@@ -28,6 +29,7 @@ public:
     int getEnPassantRowCapture(){return enPassantRowCapture_; }
     bool wasKingLeftInCheck();
     movement findMovement(unsigned char (&shadowBoard)[8][8]);
+    std::string FEN();
 
 private:
     int rows_;
@@ -41,6 +43,7 @@ private:
     int enPassantColumn_;
     int enPassantRow_;
     int enPassantRowCapture_;
+    int moveNumber_;
 
     void initializeBoard();
     bool isSameBoard(unsigned char (&shadowBoard)[8][8]);

@@ -11,6 +11,7 @@
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
 #include "common.h"
 #include "Board.h"
 #include "Pawn.h"
@@ -37,6 +38,7 @@ void Board::initializeBoard(){
     enPassantColumn_ = -1;
     enPassantRow_ = -1;
     enPassantRowCapture_ = -1;
+    moveNumber_ = 0;
 
     // initialize vector
     board_.resize(rows_);
@@ -258,6 +260,79 @@ void Board::move(movement move) {
 
     // update turn
     whiteToMove_ = !whiteToMove_;
+    moveNumber_++;
+}
+
+string Board::FEN() {
+    // board position
+    int empty_spaces = 0;
+    stringstream fen;
+    for(int row = 7; row != -1; --row) {
+      for(int column = 0; column != 8; ++column) {
+        if(board_[row][column] == '.') {
+          ++empty_spaces;
+        } else {
+          if(empty_spaces) {
+            fen << empty_spaces;
+            empty_spaces = 0;
+          }
+          fen << board_[row][column];
+        }
+      } // end of a row
+
+      if(empty_spaces) {
+        fen << empty_spaces;
+        empty_spaces = 0;
+      }
+      if(row != 0) {
+          fen << "/";
+      }
+    }
+
+    // turn to move
+    fen << (whiteToMove_? " w" : " b");
+
+    // castling availability
+    fen << " ";
+    bool any_castle = false;
+    if(whiteShortCastleAvailable_) {
+      fen << "K";
+      any_castle = true;
+    }
+    if(whiteLongCastleAvailable_) {
+      fen << "Q";
+      any_castle = true;
+    }
+    if(blackShortCastleAvailable_) {
+      fen << "k";
+      any_castle = true;
+    }
+    if(blackLongCastleAvailable_) {
+      fen << "q";
+      any_castle = true;
+    }
+    if(!any_castle) {
+      fen << "-";
+    }
+
+    // en passant
+    fen << " ";
+    if(enPassantColumn_ != -1) {
+      fen << enPassantColumn_;
+      fen << enPassantRowCapture_;
+    } else {
+      fen << "-";
+    }
+
+    // halfmove clock
+    fen << " ";
+    fen << 0;
+
+    // fullmove number
+    fen << " ";
+    fen << (moveNumber_/2)+1;
+
+    return fen.str();
 }
 
 /*int main(void){
