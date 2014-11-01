@@ -1,0 +1,89 @@
+// http://elinux.org/RPi_Low-level_peripherals#Internal_Pull-Ups_.26_Pull-Downs
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include "PiTFTButton.h"
+
+#define BCM2708_PERI_BASE        0x20000000
+#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
+#define PAGE_SIZE (4*1024)
+#define BLOCK_SIZE (4*1024)
+
+// GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x) or SET_GPIO_ALT(x,y)
+#define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
+#define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
+#define SET_GPIO_ALT(g,a) *(gpio+(((g)/10))) |= (((a)<=3?(a)+4:(a)==4?3:2)<<(((g)%10)*3))
+
+#define GPIO_SET *(gpio+7)  // sets   bits which are 1 ignores bits which are 0
+#define GPIO_CLR *(gpio+10) // clears bits which are 1 ignores bits which are 0
+
+#define GET_GPIO(g) (*(gpio+13)&(1<<g)) // 0 if LOW, (1<<g) if HIGH
+
+#define GPIO_PULL *(gpio+37) // Pull up/pull down
+#define GPIO_PULLCLK0 *(gpio+38) // Pull up/pull down clock
+
+#define short_wait() for(int i = 0; i < 65535; ++i) {}
+
+volatile unsigned * PiTFTButton::gpio = NULL;
+int PiTFTButton::mem_fd = 0;
+void * PiTFTButton::gpio_map = NULL;
+
+PiTFTButton::PiTFTButton(int pin) : pin_(pin) {
+    if(!gpio) {
+        SetupIO();
+    }
+}
+
+PiTFTButton::~PiTFTButton(){
+
+}
+
+void PiTFTButton::ConfigAsInput() {
+    INP_GPIO(pin_); // must use INP_GPIO before we can use OUT_GPIO
+      // enable pull-up on GPIO
+    GPIO_PULL = 2;
+    short_wait();
+    // clock on GPIO
+    GPIO_PULLCLK0 = 1UL << pin_;
+    short_wait();
+    GPIO_PULL = 0;
+    GPIO_PULLCLK0 = 0;
+}
+
+bool PiTFTButton::Get() {
+    return GET_GPIO(pin_);
+}
+
+//
+// Set up a memory regions to access GPIO
+//
+void PiTFTButton::SetupIO() {
+    /* open /dev/mem */
+    if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
+       printf("can't open /dev/mem \n");
+       exit(-1);
+    }
+
+    /* mmap GPIO */
+    gpio_map = mmap(
+       NULL,             //Any adddress in our space will do
+       BLOCK_SIZE,       //Map length
+       PROT_READ|PROT_WRITE,// Enable reading & writting to mapped memory
+       MAP_SHARED,       //Shared with other processes
+       mem_fd,           //File to map
+       GPIO_BASE         //Offset to GPIO peripheral
+    );
+
+    close(mem_fd); //No need to keep mem_fd open after mmap
+
+    if (gpio_map == MAP_FAILED) {
+       printf("mmap error %d\n", (int)gpio_map);//errno also set!
+       exit(-1);
+    }
+
+    // Always use volatile pointer!
+    gpio = (volatile unsigned *)gpio_map;
+}
