@@ -240,7 +240,7 @@ void ChessPi(){
         if(nanosleep(&tim , &tim2) < 0 ){
             printf("Nano sleep system call failed \n");
         }
-        if(whiteButton.Pushed()){
+        if(blackButton.Pushed()){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
                 a2d_1.Read();

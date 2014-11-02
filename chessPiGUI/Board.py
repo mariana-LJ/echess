@@ -97,6 +97,7 @@ class Board(Frame):
 
 def main():
 	root= Tk()
+	root.overrideredirect(1) # Remove title bar of window in GUI
 	board = Board(root)
 	chessUpdate = Thread(target = ChessUpdate, args = (board,))
 	chessUpdate.start()
