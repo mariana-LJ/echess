@@ -56,7 +56,7 @@ class Board(Frame):
 		centerHeight =(screnHeight)/2
 
 		self.parent.geometry('%dx%d+%d+%d' % (boardWidth, boardHeight, 
-											  centerWidth, centerHeight))
+											  0, 0))
 
 	def drawBoard(self, boardString, shadowString):
 		isWhite = True

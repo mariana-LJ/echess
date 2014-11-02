@@ -14,7 +14,7 @@ public:
     PiTFTButton(int pin);
     ~PiTFTButton();
     void ConfigAsInput();
-    bool Get();
+    bool Pushed();
 
 private:
     static int  mem_fd;
@@ -24,6 +24,8 @@ private:
     static volatile unsigned *gpio;
 
     int pin_;
+    unsigned char debounce_;
+    bool status_;
     void SetupIO();
 };
 

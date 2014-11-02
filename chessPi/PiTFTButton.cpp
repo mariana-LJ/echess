@@ -31,7 +31,7 @@ volatile unsigned * PiTFTButton::gpio = NULL;
 int PiTFTButton::mem_fd = 0;
 void * PiTFTButton::gpio_map = NULL;
 
-PiTFTButton::PiTFTButton(int pin) : pin_(pin) {
+PiTFTButton::PiTFTButton(int pin) : pin_(pin) , debounce_(0), status_(false){
     if(!gpio) {
         SetupIO();
     }
@@ -53,8 +53,20 @@ void PiTFTButton::ConfigAsInput() {
     GPIO_PULLCLK0 = 0;
 }
 
-bool PiTFTButton::Get() {
-    return GET_GPIO(pin_);
+bool PiTFTButton::Pushed() {
+    bool r = false;
+    debounce_ <<= 1;
+    // inverted logic, this input has a pull up, so when not pushed is 1
+    // when pushed is 0
+    debounce_ |= GET_GPIO(pin_) ? 0 : 1;
+    if(0xFF == debounce_ && !status_) {
+        status_ = true;
+        r = true;
+    } else if(0x00 == debounce_) {
+        status_ = false;
+    }
+
+    return r;
 }
 
 //

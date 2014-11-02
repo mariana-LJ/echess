@@ -17,6 +17,7 @@
 #include <string>
 
 #include "Board.h"
+#include "PiTFTButton.h"
 
 typedef unsigned char byte;
 using namespace std;
@@ -194,6 +195,22 @@ public:
     }
 };
 
+void PrintShadowBoard(byte *array) {
+    // need to print from black perspective to match board.PrintBoard
+    // put pointer to last row
+    array += 7*8;
+    for(int r = 7; r >= 0; --r) {
+        for(int c = 0; c < 8; ++c) {
+            cout << (*array ? 1 : 0 );
+            array++;
+        }
+        // here the pointer is at the end of the current row
+        // -8 returns to the beginning of the row
+        // -16 goes to the beginning of the previous row
+        array -= 16;
+    }
+    cout << endl;
+}
 
 void ChessPi(){
 	struct timespec tim, tim2;				// Nanosleep function setup (0 seconds and 10ms)
@@ -202,11 +219,10 @@ void ChessPi(){
 	string filename = "/dev/i2c-1";
 	const int MUX_CHANNELS = 8;
 	byte board[8][8];
-	byte button;
-	bool pushed = false;
 	Board b;
 	movement m;
-	string boardString;
+	PiTFTButton whiteButton(23);
+	PiTFTButton blackButton(18);
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -217,17 +233,14 @@ void ChessPi(){
 	gpio1.Initialize();
 	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
 
-	Gpio_Buttons gpioButtons(filename.c_str(), 0x20);
-	gpioButtons.Initialize();
+	whiteButton.ConfigAsInput();
+	blackButton.ConfigAsInput();
 
-	//system("clear");
     while(true){
         if(nanosleep(&tim , &tim2) < 0 ){
             printf("Nano sleep system call failed \n");
         }
-        gpioButtons.Update();
-        button = gpioButtons.getButtonState(0);
-        if(!pushed && button){
+        if(whiteButton.Pushed()){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
                 a2d_1.Read();
@@ -250,8 +263,8 @@ void ChessPi(){
                 b.move(m);
             }
             b.printBoard();
+            PrintShadowBoard(&(board[0][0]));
         }
-        pushed = button;
     }
 }
 
