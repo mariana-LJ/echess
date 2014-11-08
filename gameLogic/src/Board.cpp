@@ -318,13 +318,13 @@ string Board::FEN() {
     // en passant
     fen << " ";
     if(enPassantColumn_ != -1) {
-      fen << enPassantColumn_;
-      fen << enPassantRowCapture_;
+      fen << static_cast<char>('a' + enPassantColumn_);
+      fen << enPassantRowCapture_+1;
     } else {
       fen << "-";
     }
 
-    // halfmove clock
+    // to be implemented: halfmove clock
     fen << " ";
     fen << 0;
 
