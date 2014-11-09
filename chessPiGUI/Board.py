@@ -5,20 +5,28 @@ from Tkinter import Tk, Canvas, Frame, Label, BOTH, PhotoImage
 from time import sleep
 from threading import Thread
 import subprocess
+from Stockfish import Stockfish
 
 def ChessUpdate(board):
 	engine = subprocess.Popen(
 		'./chessPi',
-		stdout=subprocess.PIPE)
+		stdout=subprocess.PIPE,
+		stdin=subprocess.PIPE)
+	stockfish = Stockfish()
 	while True:
-		boardString = engine.stdout.readline()
-		boardString = boardString.strip()
+		boardString = engine.stdout.readline().strip()
 		print boardString
 		if len(boardString) == 64:
-			shadowString = engine.stdout.readline()
-			shadowString = shadowString.strip()
+			shadowString = engine.stdout.readline().strip()
 			print shadowString
-			board.drawBoard(boardString, shadowString)
+			board.drawBoard(boardString, shadowString, "")
+		elif boardString == "hint":
+			boardString = engine.stdout.readline().strip()
+			shadowStrig = engine.stdout.readline().strip()
+			fenString = engine.stdout.readline().strip()
+			bestMove = stockfish.analyze(fenString)
+			board.drawBoard(boardString, shadowStrig, bestMove)
+			engine.stdin.write("ok")
 		elif boardString == "exit":
 			break
 
@@ -43,7 +51,7 @@ class Board(Frame):
 		self.canvas.pack(fill=BOTH, expand=1)
 		boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
 		shadowString= "1111111111111111000000000000000000000000000000001111111111111111"
-		self.drawBoard(boardString, shadowString)
+		self.drawBoard(boardString, shadowString, "")
 		
 
 	def centerWindow(self):
@@ -58,7 +66,7 @@ class Board(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (boardWidth, boardHeight, 
 											  0, 0))
 
-	def drawBoard(self, boardString, shadowString):
+	def drawBoard(self, boardString, shadowString, hint):
 		isWhite = True
 		squareWidth = 26
 		squareHeight = 26
@@ -69,6 +77,18 @@ class Board(Frame):
 		border = "#fff"
 		interior = "#fff"
 		self.canvas.delete("all")
+		
+		hintColumnSource = -1
+		hintRowSource = -1
+		hintColumnDest = -1
+		hintRowDest = -1
+		if hint:
+			hintColumnSource = ord(hint[0])-ord('a')
+			# because the board is printed from black (row 0) to white (row 7)
+			# the row number needs to be inverted
+			hintRowSource = 7 - (ord(hint[1])-ord('1'))
+			hintColumnDest = ord(hint[2])-ord('a')
+			hintRowDest = 7 -(ord(hint[3])-ord('1'))
 
 		for row in range(8):
 			for col in range(8):
@@ -83,6 +103,10 @@ class Board(Frame):
 				if pieceName == '.' and shadow == '1' or pieceName != '.' and shadow == '0':
 					border = "#f00"
 					interior = "#f00"
+				if col == hintColumnSource and row == hintRowSource or \
+					 col == hintColumnDest and row == hintRowDest:
+					border = "#0f0"
+					interior = "#0f0"
 				self.canvas.create_rectangle((topX + (squareWidth*col)),
 										(topY + (squareHeight*row)),
 										(bottomX + (squareWidth*col)),

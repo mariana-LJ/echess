@@ -219,10 +219,14 @@ void ChessPi(){
 	string filename = "/dev/i2c-1";
 	const int MUX_CHANNELS = 8;
 	byte board[8][8];
+	byte prevBoard[8][8];
 	Board b;
 	movement m;
-	PiTFTButton whiteButton(23);
-	PiTFTButton blackButton(18);
+	PiTFTButton resetButton(23);
+	PiTFTButton turnButton(18);
+    memset(&(prevBoard[0][0]), 1, 16);
+    memset(&(prevBoard[0][0])+16, 0, 32);
+    memset(&(prevBoard[0][0])+48, 1, 16);
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -233,14 +237,14 @@ void ChessPi(){
 	gpio1.Initialize();
 	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
 
-	whiteButton.ConfigAsInput();
-	blackButton.ConfigAsInput();
+	resetButton.ConfigAsInput();
+	turnButton.ConfigAsInput();
 
     while(true){
         if(nanosleep(&tim , &tim2) < 0 ){
             printf("Nano sleep system call failed \n");
         }
-        if(blackButton.Pushed()){
+        if(turnButton.Pushed()){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
                 a2d_1.Read();
@@ -255,15 +259,26 @@ void ChessPi(){
                 board[mux_channel][7] = a2d_2.Get(3) < 0x25 ? 1 : 0;
             }
 
-            m = b.findMovement(board);
-            /*printf("%c (%d, %d) (%d, %d)\n", m.piece, m.origin_row,
-                   m.origin_column, m.target_row, m.target_column);*/
-            if(m.origin_row != -1 && m.origin_column != -1 &&
-               m.target_row != -1 && m.target_column != -1){
-                b.move(m);
+            // hint requested if no move was made
+            if(memcmp(&(prevBoard[0][0]), &(board[0][0]), 64) == 0) {
+                cout << "hint" << endl;
+                b.printBoard();
+                PrintShadowBoard(&(board[0][0]));
+                cout << b.FEN() << endl;
+                string wait;
+                cin >> wait;
+            } else {
+                m = b.findMovement(board);
+                /*printf("%c (%d, %d) (%d, %d)\n", m.piece, m.origin_row,
+                       m.origin_column, m.target_row, m.target_column);*/
+                if(m.origin_row != -1 && m.origin_column != -1 &&
+                   m.target_row != -1 && m.target_column != -1){
+                    b.move(m);
+                    memcpy(&(prevBoard[0][0]), &(board[0][0]), 64);
+                }
+                b.printBoard();
+                PrintShadowBoard(&(board[0][0]));
             }
-            b.printBoard();
-            PrintShadowBoard(&(board[0][0]));
         }
     }
 }
