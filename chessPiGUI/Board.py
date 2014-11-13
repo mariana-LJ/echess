@@ -26,7 +26,7 @@ def ChessUpdate(board):
 			fenString = engine.stdout.readline().strip()
 			bestMove = stockfish.analyze(fenString)
 			board.drawBoard(boardString, shadowStrig, bestMove)
-			engine.stdin.write("ok")
+			engine.stdin.write("ok\n")
 		elif boardString == "exit":
 			break
 
