@@ -213,6 +213,7 @@ void Board::move(movement move) {
     board_[move.origin_row][move.origin_column] = '.';
 
     // update castle availability
+    // if king moves, castle is lost
     if(board_[move.target_row][move.target_column] == 'K') {
         whiteShortCastleAvailable_ = false;
         whiteLongCastleAvailable_ = false;
@@ -221,21 +222,18 @@ void Board::move(movement move) {
         blackShortCastleAvailable_ = false;
         blackLongCastleAvailable_ = false;
     }
-    else if(board_[move.target_row][move.target_column] == 'R' && move.origin_row == 0){
-        if(move.origin_column == 7){
-            whiteShortCastleAvailable_ = false;
-        }
-        else if(move.origin_column == 0){
-            whiteLongCastleAvailable_ = false;
-        }
+    // if a rook at some point leaves its origin square (or it is capture), castle is lost
+    if(board_[0][0] != 'R'){
+        whiteLongCastleAvailable_ = false;
     }
-    else if(board_[move.target_row][move.target_column] == 'r' && move.origin_row == 7){
-        if(move.origin_column == 7){
-            blackShortCastleAvailable_ = false;
-        }
-        else if(move.origin_column == 0){
-            blackLongCastleAvailable_ = false;
-        }
+    if(board_[0][7] != 'R'){
+        whiteShortCastleAvailable_ = false;
+    }
+    if(board_[7][0] != 'r'){
+        blackLongCastleAvailable_ = false;
+    }
+    if(board_[7][7] != 'r'){
+        blackShortCastleAvailable_ = false;
     }
 
     // Update en passant

@@ -1157,10 +1157,11 @@ TEST(candidateMoves, Test1){
     // rnBk1b2/p1pNpp2/8/6p1/8/8/PPrP1n1P/R1B1K2b b Q - 3 15
 
     // 15. ... Rxd2 (1,2) to (1,3)
+    // three possible moves
     shadows[1][2] = 0;
     shadows[1][3] = 1;
     candidate_moves = b.findMovement(shadows);
-    ASSERT_EQ(1, candidate_moves.size());
+    ASSERT_EQ(3, candidate_moves.size());
     b.move(*findMove(candidate_moves, 1, 3));
     ASSERT_STREQ("rnBk1b2/p1pNpp2/8/6p1/8/8/PP1r1n1P/R1B1K2b w Q - 0 16", b.FEN().c_str());
 
