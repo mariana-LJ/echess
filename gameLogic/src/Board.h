@@ -28,7 +28,7 @@ public:
     int getEnPassantRow(){return enPassantRow_; }
     int getEnPassantRowCapture(){return enPassantRowCapture_; }
     bool wasKingLeftInCheck();
-    movement findMovement(unsigned char (&shadowBoard)[8][8]);
+    std::vector<movement> findMovement(unsigned char (&shadowBoard)[8][8]);
     std::string FEN();
 
 private:

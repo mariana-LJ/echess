@@ -112,25 +112,24 @@ bool Board::isSameBoard(unsigned char (&shadowBoard)[8][8]){
     return true;
 }
 
-movement Board::findMovement(unsigned char (&shadowBoard)[8][8]){
-    vector<movement> moves;
+vector<movement> Board::findMovement(unsigned char (&shadowBoard)[8][8]){
+    vector<movement> candidate_moves;
 
     for(int row = 0; row < rows_; ++row){
         for(int col = 0; col < columns_; ++col){
-            moves = getMoves(row, col);
+            vector<movement> moves = getMoves(row, col);
             for(vector<movement>::const_iterator p = moves.begin();
                 p != moves.end(); ++p){
                 Board clonBoard(*this);
                 clonBoard.move(*p);
                 if(!clonBoard.wasKingLeftInCheck() && clonBoard.isSameBoard(shadowBoard)){
-                    return *p;
+                    candidate_moves.push_back(*p);
                 }
             }
         }
     }
 
-    movement emptyMove;
-    return emptyMove;
+    return candidate_moves;
 }
 
 vector<char> & Board::operator[](size_t index) {
