@@ -14,20 +14,26 @@ def ChessUpdate(board):
 		stdin=subprocess.PIPE)
 	stockfish = Stockfish()
 	while True:
-		boardString = engine.stdout.readline().strip()
-		print boardString
-		if len(boardString) == 64:
+		command = engine.stdout.readline().strip()
+		if command == "move" or command == "error":
+			boardString = engine.stdout.readline().strip()
 			shadowString = engine.stdout.readline().strip()
+			print boardString
 			print shadowString
-			board.drawBoard(boardString, shadowString, "")
-		elif boardString == "hint":
+			board.drawBoard(boardString, shadowString, "", "")
+		elif command == "hint":
 			boardString = engine.stdout.readline().strip()
 			shadowStrig = engine.stdout.readline().strip()
 			fenString = engine.stdout.readline().strip()
 			bestMove = stockfish.analyze(fenString)
-			board.drawBoard(boardString, shadowStrig, bestMove)
+			board.drawBoard(boardString, shadowStrig, bestMove, "")
 			engine.stdin.write("ok\n")
-		elif boardString == "exit":
+		elif command == "option":
+			boardString = engine.stdout.readline().strip()
+			shadowStrig = engine.stdout.readline().strip()
+			option = engine.stdout.readline().strip()
+			board.drawBoard(boardString, shadowString, "", option)
+		elif command == "exit":
 			break
 
 class Board(Frame):
@@ -51,7 +57,7 @@ class Board(Frame):
 		self.canvas.pack(fill=BOTH, expand=1)
 		boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
 		shadowString= "1111111111111111000000000000000000000000000000001111111111111111"
-		self.drawBoard(boardString, shadowString, "")
+		self.drawBoard(boardString, shadowString, "", "")
 		
 
 	def centerWindow(self):
@@ -66,7 +72,7 @@ class Board(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (boardWidth, boardHeight, 
 											  0, 0))
 
-	def drawBoard(self, boardString, shadowString, hint):
+	def drawBoard(self, boardString, shadowString, hint, option):
 		isWhite = True
 		squareWidth = 26
 		squareHeight = 26
@@ -89,6 +95,12 @@ class Board(Frame):
 			hintRowSource = 7 - (ord(hint[1])-ord('1'))
 			hintColumnDest = ord(hint[2])-ord('a')
 			hintRowDest = 7 -(ord(hint[3])-ord('1'))
+		
+		optionRow = -1
+		optionColumn = -1
+		if option:
+			optionRow = 7 - (ord(option[0]) - ord('0'))
+			optionColumn = ord(option[1]) - ord('0')
 
 		for row in range(8):
 			for col in range(8):
@@ -107,6 +119,9 @@ class Board(Frame):
 					 col == hintColumnDest and row == hintRowDest:
 					border = "#0f0"
 					interior = "#0f0"
+				if col == optionColumn and row == optionRow:
+					border = "#0ff"
+					interior = "#0ff"
 				self.canvas.create_rectangle((topX + (squareWidth*col)),
 										(topY + (squareHeight*row)),
 										(bottomX + (squareWidth*col)),

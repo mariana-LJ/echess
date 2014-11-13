@@ -221,7 +221,7 @@ void ChessPi(){
 	byte board[8][8];
 	byte prevBoard[8][8];
 	Board b;
-	movement m;
+	vector<movement> candidate_moves;
 	PiTFTButton resetButton(23);
 	PiTFTButton turnButton(18);
     memset(&(prevBoard[0][0]), 1, 16);
@@ -241,9 +241,7 @@ void ChessPi(){
 	turnButton.ConfigAsInput();
 
     while(true){
-        if(nanosleep(&tim , &tim2) < 0 ){
-            printf("Nano sleep system call failed \n");
-        }
+        nanosleep(&tim , &tim2);
         if(turnButton.Pushed()){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
@@ -268,16 +266,43 @@ void ChessPi(){
                 string wait;
                 cin >> wait;
             } else {
-                m = b.findMovement(board);
-                /*printf("%c (%d, %d) (%d, %d)\n", m.piece, m.origin_row,
-                       m.origin_column, m.target_row, m.target_column);*/
-                if(m.origin_row != -1 && m.origin_column != -1 &&
-                   m.target_row != -1 && m.target_column != -1){
-                    b.move(m);
+                candidate_moves = b.findMovement(board);
+                if(candidate_moves.size() == 1){
+                    b.move(candidate_moves[0]);
                     memcpy(&(prevBoard[0][0]), &(board[0][0]), 64);
+                    cout << "move" << endl;
+                    b.printBoard();
+                    PrintShadowBoard(&(board[0][0]));
+                } else if (candidate_moves.size() > 1) {
+                    // multiple options
+                    int option = 0;
+                    cout << "option" << endl;
+                    b.printBoard();
+                    PrintShadowBoard(&(board[0][0]));
+                    cout << candidate_moves[option].target_row << candidate_moves[option].target_column << endl;
+                    while(true) {
+                        nanosleep(&tim , &tim2);
+                        if(turnButton.Pushed()) {
+                            b.move(candidate_moves[option]);
+                            memcpy(&(prevBoard[0][0]), &(board[0][0]), 64);
+                            cout << "move" << endl;
+                            b.printBoard();
+                            PrintShadowBoard(&(board[0][0]));
+                            break;
+                        } else if (resetButton.Pushed()) {
+                            option = (++option) % candidate_moves.size();
+                            cout << "option" << endl;
+                            b.printBoard();
+                            PrintShadowBoard(&(board[0][0]));
+                            cout << candidate_moves[option].target_row << candidate_moves[option].target_column << endl;
+                        }
+                    }
+                } else {
+                    // wrong move
+                    cout << "error" << endl;
+                    b.printBoard();
+                    PrintShadowBoard(&(board[0][0]));
                 }
-                b.printBoard();
-                PrintShadowBoard(&(board[0][0]));
             }
         }
     }
