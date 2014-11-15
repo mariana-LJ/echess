@@ -8,33 +8,41 @@ import subprocess
 from Stockfish import Stockfish
 
 def ChessUpdate(board):
-	engine = subprocess.Popen(
+	chessPi = subprocess.Popen(
 		'./chessPi',
 		stdout=subprocess.PIPE,
 		stdin=subprocess.PIPE)
 	stockfish = Stockfish()
 	while True:
-		command = engine.stdout.readline().strip()
+		command = chessPi.stdout.readline().strip()
 		if command == "move" or command == "error":
-			boardString = engine.stdout.readline().strip()
-			shadowString = engine.stdout.readline().strip()
+			boardString = chessPi.stdout.readline().strip()
+			shadowString = chessPi.stdout.readline().strip()
+			turn = chessPi.stdout.readline().strip()
 			print boardString
 			print shadowString
-			board.drawBoard(boardString, shadowString, "", "")
+			board.drawBoard(boardString, shadowString, "", "", turn, command)
 		elif command == "hint":
-			boardString = engine.stdout.readline().strip()
-			shadowStrig = engine.stdout.readline().strip()
-			fenString = engine.stdout.readline().strip()
+			boardString = chessPi.stdout.readline().strip()
+			shadowStrig = chessPi.stdout.readline().strip()
+			turn = chessPi.stdout.readline().strip()
+			fenString = chessPi.stdout.readline().strip()
+			board.drawBoard(boardString, shadowStrig, "", "", turn, command)
 			bestMove = stockfish.analyze(fenString)
-			board.drawBoard(boardString, shadowStrig, bestMove, "")
-			engine.stdin.write("ok\n")
+			board.drawBoard(boardString, shadowStrig, bestMove, "", turn, "nocommand")
+			chessPi.stdin.write("ok\n")
 		elif command == "option":
-			boardString = engine.stdout.readline().strip()
-			shadowStrig = engine.stdout.readline().strip()
-			option = engine.stdout.readline().strip()
-			board.drawBoard(boardString, shadowString, "", option)
+			boardString = chessPi.stdout.readline().strip()
+			shadowStrig = chessPi.stdout.readline().strip()
+			turn = chessPi.stdout.readline().strip()
+			option = chessPi.stdout.readline().strip()
+			board.drawBoard(boardString, shadowString, "", option, turn, command)
 		elif command == "exit":
+			board.quit()
+			stockfish.engine.kill()
 			break
+	
+	sys.exit()
 
 class Board(Frame):
 
@@ -42,6 +50,9 @@ class Board(Frame):
 		Frame.__init__(self, parent)
 		self.parent = parent
 		self.initUI()
+
+	def quit(self):
+		self.parent.destroy()
 
 	def initUI(self):
 		self.parent.title("Board")
@@ -57,11 +68,11 @@ class Board(Frame):
 		self.canvas.pack(fill=BOTH, expand=1)
 		boardString = "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
 		shadowString= "1111111111111111000000000000000000000000000000001111111111111111"
-		self.drawBoard(boardString, shadowString, "", "")
+		self.drawBoard(boardString, shadowString, "", "", "w", "move")
 		
 
 	def centerWindow(self):
-		boardWidth = 208
+		boardWidth = 320 # left side (56) + 8(26) + right side (56)
 		boardHeight = 208
 
 		screenWidth = self.parent.winfo_screenwidth()
@@ -72,14 +83,13 @@ class Board(Frame):
 		self.parent.geometry('%dx%d+%d+%d' % (boardWidth, boardHeight, 
 											  0, 0))
 
-	def drawBoard(self, boardString, shadowString, hint, option):
+	def drawBoard(self, boardString, shadowString, hint, option, turn, command):
 		isWhite = True
+		sidePanelWidth = 56
 		squareWidth = 26
 		squareHeight = 26
-		topX = 0
+		topX = sidePanelWidth
 		topY = 0
-		bottomX = 26
-		bottomY = 26
 		border = "#fff"
 		interior = "#fff"
 		self.canvas.delete("all")
@@ -120,18 +130,40 @@ class Board(Frame):
 					border = "#0f0"
 					interior = "#0f0"
 				if col == optionColumn and row == optionRow:
-					border = "#0ff"
-					interior = "#0ff"
-				self.canvas.create_rectangle((topX + (squareWidth*col)),
-										(topY + (squareHeight*row)),
-										(bottomX + (squareWidth*col)),
-										(bottomY + (squareHeight*row)),
-									    outline=border, fill=interior)
+					border = "#ff0"
+					interior = "#ff0"
+				self.canvas.create_rectangle(
+							(topX + (squareWidth*col)),
+							(topY + (squareHeight*row)),
+							(topX + (squareWidth*col) + squareWidth),
+							(topY + (squareHeight*row) + squareHeight),
+							outline=border, fill=interior)
 				if pieceName != '.':
-					self.canvas.create_image(13 + 26*col, 13 + 26*row, image=self.pieces[pieceName])
+					self.canvas.create_image(
+							topX + 13 + 26*col, 
+							topY + 13 + 26*row, 
+							image=self.pieces[pieceName])
 				isWhite = not isWhite
 					
 			isWhite = not isWhite
+		
+		if command == "error" :
+			sidePanelColor = "#f00"
+		elif command == "hint":
+			sidePanelColor = "#ff0"
+		else :
+			sidePanelColor = "#0f0"
+		
+		if turn == 'w':
+			self.canvas.create_rectangle(0,0,sidePanelWidth,208,fill=sidePanelColor)
+			self.canvas.create_rectangle(sidePanelWidth+8*squareWidth,0,
+																   sidePanelWidth+8*squareWidth+sidePanelWidth,208,
+																   fill="#333")
+		else:
+			self.canvas.create_rectangle(0,0,sidePanelWidth,208,fill="#333")
+			self.canvas.create_rectangle(sidePanelWidth+8*squareWidth,0,
+																   sidePanelWidth+8*squareWidth+sidePanelWidth,208,
+																   fill=sidePanelColor)
 		
 
 def main():

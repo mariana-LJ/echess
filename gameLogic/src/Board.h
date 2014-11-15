@@ -30,6 +30,7 @@ public:
     bool wasKingLeftInCheck();
     std::vector<movement> findMovement(unsigned char (&shadowBoard)[8][8]);
     std::string FEN();
+    bool whiteToMove() { return whiteToMove_; }
 
 private:
     int rows_;

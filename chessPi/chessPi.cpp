@@ -222,8 +222,10 @@ void ChessPi(){
 	byte prevBoard[8][8];
 	Board b;
 	vector<movement> candidate_moves;
-	PiTFTButton resetButton(23);
-	PiTFTButton turnButton(18);
+	PiTFTButton exitButton(23);
+	PiTFTButton turnButton(22);
+	PiTFTButton optionButton(27);
+	//PiTFTButton turnButton(18);
     memset(&(prevBoard[0][0]), 1, 16);
     memset(&(prevBoard[0][0])+16, 0, 32);
     memset(&(prevBoard[0][0])+48, 1, 16);
@@ -237,11 +239,16 @@ void ChessPi(){
 	gpio1.Initialize();
 	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
 
-	resetButton.ConfigAsInput();
+	exitButton.ConfigAsInput();
+	//resetButton.ConfigAsInput();
+	optionButton.ConfigAsInput();
 	turnButton.ConfigAsInput();
 
     while(true){
         nanosleep(&tim , &tim2);
+        if(exitButton.Pushed()) {
+            break;
+        }
         if(turnButton.Pushed()){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
@@ -262,6 +269,7 @@ void ChessPi(){
                 cout << "hint" << endl;
                 b.printBoard();
                 PrintShadowBoard(&(board[0][0]));
+                cout << (b.whiteToMove() ? "w" : "b") << endl;
                 cout << b.FEN() << endl;
                 string wait;
                 cin >> wait;
@@ -273,12 +281,14 @@ void ChessPi(){
                     cout << "move" << endl;
                     b.printBoard();
                     PrintShadowBoard(&(board[0][0]));
+                    cout << (b.whiteToMove() ? "w" : "b") << endl;
                 } else if (candidate_moves.size() > 1) {
                     // multiple options
                     int option = 0;
                     cout << "option" << endl;
                     b.printBoard();
                     PrintShadowBoard(&(board[0][0]));
+                    cout << (b.whiteToMove() ? "w" : "b") << endl;
                     cout << candidate_moves[option].target_row << candidate_moves[option].target_column << endl;
                     while(true) {
                         nanosleep(&tim , &tim2);
@@ -288,12 +298,15 @@ void ChessPi(){
                             cout << "move" << endl;
                             b.printBoard();
                             PrintShadowBoard(&(board[0][0]));
+                            cout << (b.whiteToMove() ? "w" : "b") << endl;
                             break;
-                        } else if (resetButton.Pushed()) {
-                            option = (++option) % candidate_moves.size();
+                        } else if (optionButton.Pushed()) {
+                            option++;
+                            option = option % candidate_moves.size();
                             cout << "option" << endl;
                             b.printBoard();
                             PrintShadowBoard(&(board[0][0]));
+                            cout << (b.whiteToMove() ? "w" : "b") << endl;
                             cout << candidate_moves[option].target_row << candidate_moves[option].target_column << endl;
                         }
                     }
@@ -302,10 +315,13 @@ void ChessPi(){
                     cout << "error" << endl;
                     b.printBoard();
                     PrintShadowBoard(&(board[0][0]));
+                    cout << (b.whiteToMove() ? "w" : "b") << endl;
                 }
             }
         }
     }
+
+    cout << "exit" << endl;
 }
 
 int main(int argc, char **argv){
