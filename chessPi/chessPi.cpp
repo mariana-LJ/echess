@@ -221,14 +221,16 @@ void ChessPi(){
 	byte board[8][8];
 	byte prevBoard[8][8];
 	Board b;
+	bool reset;
 	vector<movement> candidate_moves;
 	PiTFTButton exitButton(23);
-	PiTFTButton turnButton(22);
+	PiTFTButton turnButton(18);
 	PiTFTButton optionButton(27);
-	//PiTFTButton turnButton(18);
+	PiTFTButton resetButton(22);
     memset(&(prevBoard[0][0]), 1, 16);
     memset(&(prevBoard[0][0])+16, 0, 32);
     memset(&(prevBoard[0][0])+48, 1, 16);
+
 
 	A2D_Converter a2d_1(filename.c_str(), 0x48);	// A2D address for both chips
 	a2d_1.Initialize();
@@ -240,16 +242,17 @@ void ChessPi(){
 	gpio1.Configure_PortB(0x00);	//Configure port B pins as outputs
 
 	exitButton.ConfigAsInput();
-	//resetButton.ConfigAsInput();
+	resetButton.ConfigAsInput();
 	optionButton.ConfigAsInput();
 	turnButton.ConfigAsInput();
 
     while(true){
         nanosleep(&tim , &tim2);
-        if(exitButton.Pushed()) {
+        /*if(exitButton.Pushed()) {
             break;
-        }
-        if(turnButton.Pushed()){
+        }*/
+        reset = resetButton.Pushed();
+        if(turnButton.Pushed() || reset){
             for(int mux_channel = 0; mux_channel < MUX_CHANNELS; mux_channel++){
                 gpio1.Set_PortB(1<<mux_channel);
                 a2d_1.Read();
@@ -264,8 +267,23 @@ void ChessPi(){
                 board[mux_channel][7] = a2d_2.Get(3) < 0x25 ? 1 : 0;
             }
 
+            // Reset the game to initial position
+            if(reset){
+                memset(&(prevBoard[0][0]), 1, 16);
+                memset(&(prevBoard[0][0])+16, 0, 32);
+                memset(&(prevBoard[0][0])+48, 1, 16);
+
+                b.initializeBoard();
+
+                cout << "move" << endl;
+                b.printBoard();
+                PrintShadowBoard(&(board[0][0]));
+                cout << (b.whiteToMove() ? "w" : "b") << endl;
+
+                reset = false;
+            }
             // hint requested if no move was made
-            if(memcmp(&(prevBoard[0][0]), &(board[0][0]), 64) == 0) {
+            else if(memcmp(&(prevBoard[0][0]), &(board[0][0]), 64) == 0) {
                 cout << "hint" << endl;
                 b.printBoard();
                 PrintShadowBoard(&(board[0][0]));

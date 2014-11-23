@@ -16,6 +16,7 @@ class Board{
 public:
 
     Board();
+    void initializeBoard();
     void printBoard();
     std::vector<movement> getMoves(int row, int column);
     void move(movement move);
@@ -46,7 +47,6 @@ private:
     int enPassantRowCapture_;
     int moveNumber_;
 
-    void initializeBoard();
     bool isSameBoard(unsigned char (&shadowBoard)[8][8]);
 };
 
